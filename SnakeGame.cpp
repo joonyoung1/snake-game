@@ -103,6 +103,7 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
         if(snake.selfCollide())
             endGame();
         snake.shortenLength(1);
+
         body = snake.getBody();
         map.setBlock(body[0][0], body[0][1], 3);
 
