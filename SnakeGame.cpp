@@ -77,15 +77,23 @@ int main()
         switch(input)
         {
         case KEY_UP:
+            if(*d == 2)
+                endGame(playing);
             *d = 0;
             break;
         case KEY_RIGHT:
+            if(*d == 3)
+                endGame(playing);
             *d = 1;
             break;
         case KEY_DOWN:
+            if(*d == 0)
+                endGame(playing);
             *d = 2;
             break;
         case KEY_LEFT:
+            if(*d == 1)
+                endGame(playing);
             *d = 3;
         }
     }
