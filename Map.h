@@ -4,6 +4,7 @@ class Map{
     int** board;
     int growthCount;
     int poisonCount;
+    int wallCount;
     void createGrowth_();
     void createPoison_();
 public:
@@ -13,6 +14,7 @@ public:
     void createGrowth();
     void createPoison();
     void createGate();
+    int moveToOppositeGate(int** body, int d);
     void increaseGrowthCount();
     void increasePoisonCount();
 };

@@ -9,8 +9,9 @@ using namespace std;
 
 const char* printTable[] = {" ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
 
-void moveSnake(Snake snake, Map map, int *, bool* playing);
+void moveSnake(Snake &snake, Map &map, int *, bool* playing);
 void endGame(bool* playing);
+void actByBlock(Snake &snake, Map &map, int block, int* d, bool* playing);
 
 int main()
 {
@@ -64,15 +65,13 @@ int main()
         for(int c = 0; c < 21; c++)
             mvprintw(r, c*2, printTable[map.getBlock(r, c)]);
     refresh();
-
     this_thread::sleep_for(chrono::milliseconds(500));
-    
 
     int *d = new int;
     *d = 0;
     bool *playing = new bool;
     *playing = true;
-    thread moveSnakeThread(moveSnake, snake, map, d, playing);
+    thread moveSnakeThread(moveSnake, ref(snake), ref(map), d, playing);
 
     while(playing)
     {
@@ -105,7 +104,7 @@ int main()
     return 0;
 }
 
-void moveSnake(Snake snake, Map map, int* d, bool* playing)
+void moveSnake(Snake &snake, Map &map, int* d, bool* playing)
 {
     int** body;
     int length, block;
@@ -115,32 +114,11 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
         body = snake.getBody();
         length = snake.getLength();
 
-        map.setBlock(body[length - 1][0], body[length - 1][1], 0);
+        map.setBlock(body[length][0], body[length][1], 0);
         block = map.getBlock(body[0][0], body[0][1]);
         map.setBlock(body[0][0], body[0][1], 3);
         map.setBlock(body[1][0], body[1][1], 4);
-        switch(block)
-        {
-        case 0:
-            snake.setLength(snake.getLength() - 1);
-            break;
-        case 1: case 2: case 4:
-            endGame(playing);
-            break;
-        case 5:
-            map.setBlock(body[length - 1][0], body[length - 1][1], 4);
-            map.increaseGrowthCount();
-            map.createGrowth();
-            break;
-        case 6:
-            if(snake.getLength() == 4)
-                endGame(playing);
-            map.setBlock(body[length - 2][0], body[length - 2][1], 0);
-            snake.setLength(snake.getLength() - 2);
-            map.increasePoisonCount();
-            map.createPoison();
-        }
-
+        actByBlock(snake, map, block, d, playing);
         clear();
         for(int r = 0; r < 21; r++)
             for(int c = 0; c < 21; c++)
@@ -148,6 +126,41 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
         refresh();
 
         this_thread::sleep_for(chrono::milliseconds(500));
+    }
+}
+
+void actByBlock(Snake &snake, Map &map, int block, int* d, bool* playing)
+{
+    int** body = snake.getBody();
+    int length = snake.getLength();
+    switch(block)
+    {
+    case 1: case 2: case 4:
+        endGame(playing);
+        break;
+    case 5:
+        map.setBlock(body[length][0], body[length][1], 4);
+        snake.setLength(length + 1);
+        map.increaseGrowthCount();
+        map.createGrowth();
+        break;
+    case 6:
+        if(snake.getLength() == 3)
+        {
+            endGame(playing);
+            break;
+        }
+        map.setBlock(body[length - 1][0], body[length - 1][1], 0);
+        snake.setLength(length - 1);
+        map.increasePoisonCount();
+        map.createPoison();
+        break;
+    case 7:
+        map.setBlock(body[0][0], body[0][1], 7);
+        *d = map.moveToOppositeGate(body, *d);
+        block = map.getBlock(body[0][0], body[0][1]);
+        map.setBlock(body[0][0], body[0][1], 3);
+        actByBlock(snake, map, block, d, playing);
     }
 }
 

@@ -30,7 +30,6 @@ void Snake::move(int d)
 
     body[0][0] = body[1][0] + direction[d][0];
     body[0][1] = body[1][1] + direction[d][1];
-    length++;
 }
 
 int Snake::getLength()

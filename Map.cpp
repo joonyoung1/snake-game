@@ -6,6 +6,8 @@
 #include "Map.h"
 using namespace std;
 
+extern int direction[4][2];
+
 Map::Map(int r, int c, int** board)
 {
     srand(time(NULL));
@@ -13,10 +15,17 @@ Map::Map(int r, int c, int** board)
     cols = c;
     growthCount = 0;
     poisonCount = 0;
+
     this->board = board;
+    wallCount = 0;
+    for(int r = 0; r < rows; r++)
+        for(int c = 0; c < cols; c++)
+            if(board[r][c] == 1)
+                wallCount++;
 
     createGrowth();
     createPoison();
+    createGate();
 }
 
 int Map::getBlock(int r, int c)
@@ -81,7 +90,57 @@ void Map::createPoison_()
 
 void Map::createGate()
 {
+    int gatePosA = rand() % wallCount;
+    int gateposB = (gatePosA + rand() % (wallCount - 1)) % wallCount;
+    int passedWall = 0;
+    for(int r = 0; r < rows; r++)
+    {
+        for(int c = 0; c < cols; c++)
+        {
+            if(board[r][c] == 1)
+            {
+                if(passedWall == gatePosA || passedWall == gateposB)
+                    board[r][c] = 7;
+                passedWall++;
+            }
+        }
+    }
+}
 
+int Map::moveToOppositeGate(int** body, int d)
+{
+    int r, c;
+    bool found = false;
+    for(r = 0; r < rows; r++)
+    {
+        for(c = 0; c < cols; c++)
+        {
+            if(board[r][c] == 7 && r != body[0][0] && c != body[0][1])
+            {
+                found = true;
+                break;
+            }
+        }
+        if(found)
+            break;
+    }
+
+    int newR, newC;
+    for(int i = 0; i < 4; i++)
+    {
+        d = (d + i) % 4;
+        newR = r + direction[d][0];
+        newC = c + direction[d][1];
+        if(0 <= newR && newR < rows && 0 <= newC && newC < cols)
+        {
+            if(board[newR][newC] != 1 && board[newR][newC] != 2)
+            {
+                body[0][0] = newR;
+                body[0][1] = newC;
+                return d;
+            }
+        }
+    }
 }
 
 void Map::increaseGrowthCount()
