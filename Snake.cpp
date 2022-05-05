@@ -45,9 +45,9 @@ bool Snake::selfCollide()
     return false;
 }
 
-void Snake::shortenLength(int n)
+void Snake::setLength(int n)
 {
-    length -= n;
+    length = n;
 }
 
 int Snake::getLength()

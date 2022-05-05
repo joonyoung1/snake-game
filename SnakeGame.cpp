@@ -105,7 +105,7 @@ int main()
 void moveSnake(Snake snake, Map map, int* d, bool* playing)
 {
     int** body;
-    int length;
+    int length, block;
     while(*playing)
     {
         snake.move(*d);
@@ -114,10 +114,30 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
 
         body = snake.getBody();
         length = snake.getLength();
+
+        map.setBlock(body[length - 1][0], body[length - 1][1], 0);
+        block = map.getBlock(body[0][0], body[0][1]);
         map.setBlock(body[0][0], body[0][1], 3);
         map.setBlock(body[1][0], body[1][1], 4);
-        map.setBlock(body[length - 1][0], body[length - 1][1], 0);
-        snake.shortenLength(1);
+        switch(block)
+        {
+        case 0:
+            snake.setLength(snake.getLength() - 1);
+            break;
+        case 1: case 2: case 4:
+            endGame(playing);
+            break;
+        case 5:
+            map.setBlock(body[length - 1][0], body[length - 1][1], 4);
+            map.createGrowth();
+            break;
+        case 6:
+            if(snake.getLength() == 4)
+                endGame(playing);
+            map.setBlock(body[length - 2][0], body[length - 2][1], 0);
+            snake.setLength(snake.getLength() - 2);
+            map.createPoison();
+        }
 
         clear();
         for(int r = 0; r < 21; r++)

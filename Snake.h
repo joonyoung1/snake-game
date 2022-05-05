@@ -5,8 +5,8 @@ public:
     Snake(int r, int c, int d);
     void move(int d);
     bool selfCollide();
-    void shortenLength(int n);
     int getLength();
+    void setLength(int n);
     int** getBody();
     void remove();
 };
