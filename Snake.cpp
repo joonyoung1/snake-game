@@ -33,19 +33,25 @@ void Snake::move(int d)
     length++;
 }
 
-void Snake::setLength(int n)
-{
-    length = n;
-}
-
 int Snake::getLength()
 {
     return length;
 }
 
+void Snake::setLength(int n)
+{
+    length = n;
+}
+
 int** Snake::getBody()
 {
     return body;
+}
+
+void Snake::setHead(int r, int c)
+{
+    body[0][0] = r;
+    body[0][1] = c;
 }
 
 void Snake::remove()

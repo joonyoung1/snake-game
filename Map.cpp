@@ -11,10 +11,8 @@ Map::Map(int r, int c, int** board)
     srand(time(NULL));
     rows = r;
     cols = c;
-    growthCount = new int;
-    *growthCount = 0;
-    poisonCount = new int;
-    *poisonCount = 0;
+    growthCount = 0;
+    poisonCount = 0;
     this->board = board;
 
     createGrowth();
@@ -31,11 +29,17 @@ void Map::setBlock(int r, int c, int value)
     this->board[r][c] = value;
 }
 
+void Map::createGrowth()
+{
+    thread createGrowthThread(&Map::createGrowth_, this);
+    createGrowthThread.detach();
+}
+
 void Map::createGrowth_()
 {
     int r, c;
-    int numAtCreated = *growthCount;
-    while(numAtCreated == *growthCount)
+    int numAtCreated = growthCount;
+    while(numAtCreated == growthCount)
     {
         do
         {
@@ -50,17 +54,17 @@ void Map::createGrowth_()
     }
 }
 
-void Map::createGrowth()
+void Map::createPoison()
 {
-    thread createGrowthThread(&Map::createGrowth_, this);
-    createGrowthThread.detach();
+    thread createPoisonThread(&Map::createPoison_, this);
+    createPoisonThread.detach();
 }
 
 void Map::createPoison_()
 {
     int r, c;
-    int numAtCreated = *poisonCount;
-    while(numAtCreated == *poisonCount)
+    int numAtCreated = poisonCount;
+    while(numAtCreated == poisonCount)
     {
         do
         {
@@ -75,24 +79,17 @@ void Map::createPoison_()
     }
 }
 
-void Map::createPoison()
+void Map::createGate()
 {
-    thread createPoisonThread(&Map::createPoison_, this);
-    createPoisonThread.detach();
+
 }
 
 void Map::increaseGrowthCount()
 {
-    *growthCount = *growthCount + 1;
+    growthCount++;
 }
 
 void Map::increasePoisonCount()
 {
-    *poisonCount = *poisonCount + 1;
-}
-
-void Map::remove()
-{
-    delete growthCount;
-    delete poisonCount;
+    poisonCount++;
 }
