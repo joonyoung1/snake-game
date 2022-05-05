@@ -1,15 +1,20 @@
 #include <iostream>
 #include <stdlib.h>
+#include <thread>
+#include <chrono>
 #include <time.h>
 #include "Map.h"
+using namespace std;
 
 Map::Map(int r, int c, int** board)
 {
     srand(time(NULL));
     rows = r;
     cols = c;
-    growth = new int[2];
-    poison = new int[2];
+    growthCount = new int;
+    *growthCount = 0;
+    poisonCount = new int;
+    *poisonCount = 0;
     this->board = board;
 
     createGrowth();
@@ -26,32 +31,68 @@ void Map::setBlock(int r, int c, int value)
     this->board[r][c] = value;
 }
 
+void Map::createGrowth_()
+{
+    int r, c;
+    int numAtCreated = *growthCount;
+    while(numAtCreated == *growthCount)
+    {
+        do
+        {
+            r = rand() % rows;
+            c = rand() % cols;
+        }
+        while(board[r][c] != 0);
+        board[r][c] = 5;
+        this_thread::sleep_for(chrono::milliseconds(5000));
+        if(board[r][c] == 5)
+            board[r][c] = 0;
+    }
+}
+
 void Map::createGrowth()
 {
-    do
-    {
-        growth[0] = rand() % rows;
-        growth[1] = rand() % cols;
-    }
-    while(board[growth[0]][growth[1]] != 0);
+    thread createGrowthThread(&Map::createGrowth_, this);
+    createGrowthThread.detach();
+}
 
-    board[growth[0]][growth[1]] = 5;
+void Map::createPoison_()
+{
+    int r, c;
+    int numAtCreated = *poisonCount;
+    while(numAtCreated == *poisonCount)
+    {
+        do
+        {
+            r = rand() % rows;
+            c = rand() % cols;
+        }
+        while(board[r][c] != 0);
+        board[r][c] = 6;
+        this_thread::sleep_for(chrono::milliseconds(5000));
+        if(board[r][c] == 6)
+            board[r][c] = 0;
+    }
 }
 
 void Map::createPoison()
 {
-    do
-    {
-        poison[0] = rand() % rows;
-        poison[1] = rand() % cols;
-    }
-    while(board[poison[0]][poison[1]] != 0);
+    thread createPoisonThread(&Map::createPoison_, this);
+    createPoisonThread.detach();
+}
 
-    board[poison[0]][poison[1]] = 6;
+void Map::increaseGrowthCount()
+{
+    *growthCount = *growthCount + 1;
+}
+
+void Map::increasePoisonCount()
+{
+    *poisonCount = *poisonCount + 1;
 }
 
 void Map::remove()
 {
-    delete[] growth;
-    delete[] poison;
+    delete growthCount;
+    delete poisonCount;
 }

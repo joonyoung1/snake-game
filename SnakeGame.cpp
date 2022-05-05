@@ -65,6 +65,9 @@ int main()
             mvprintw(r, c*2, printTable[map.getBlock(r, c)]);
     refresh();
 
+    this_thread::sleep_for(chrono::milliseconds(500));
+    
+
     int *d = new int;
     *d = 0;
     bool *playing = new bool;
@@ -109,9 +112,6 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
     while(*playing)
     {
         snake.move(*d);
-        if(snake.selfCollide())
-            endGame(playing);
-
         body = snake.getBody();
         length = snake.getLength();
 
@@ -129,6 +129,7 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
             break;
         case 5:
             map.setBlock(body[length - 1][0], body[length - 1][1], 4);
+            map.increaseGrowthCount();
             map.createGrowth();
             break;
         case 6:
@@ -136,6 +137,7 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
                 endGame(playing);
             map.setBlock(body[length - 2][0], body[length - 2][1], 0);
             snake.setLength(snake.getLength() - 2);
+            map.increasePoisonCount();
             map.createPoison();
         }
 
