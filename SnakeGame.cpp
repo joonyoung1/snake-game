@@ -10,7 +10,7 @@ using namespace std;
 const char* printTable[] = {" ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
 
 void moveSnake(Snake snake, Map map, int *, bool* playing);
-void endGame();
+void endGame(bool* playing);
 
 int main()
 {
@@ -68,7 +68,7 @@ int main()
     int *d = new int;
     *d = 0;
     bool *playing = new bool;
-    *playing = false;
+    *playing = true;
     thread moveSnakeThread(moveSnake, snake, map, d, playing);
 
     while(playing)
@@ -97,15 +97,19 @@ int main()
 void moveSnake(Snake snake, Map map, int* d, bool* playing)
 {
     int** body;
-    while(playing)
+    int length;
+    while(*playing)
     {
         snake.move(*d);
         if(snake.selfCollide())
-            endGame();
-        snake.shortenLength(1);
+            endGame(playing);
 
         body = snake.getBody();
+        length = snake.getLength();
         map.setBlock(body[0][0], body[0][1], 3);
+        map.setBlock(body[1][0], body[1][1], 4);
+        map.setBlock(body[length - 1][0], body[length - 1][1], 0);
+        snake.shortenLength(1);
 
         clear();
         for(int r = 0; r < 21; r++)
@@ -117,7 +121,12 @@ void moveSnake(Snake snake, Map map, int* d, bool* playing)
     }
 }
 
-void endGame()
+void endGame(bool* playing)
+{
+    *playing = false;
+}
+
+void endProgram()
 {
 
 }

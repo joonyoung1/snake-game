@@ -22,18 +22,32 @@ Snake::Snake(int r, int c, int d)
 
 void Snake::move(int d)
 {
-    body[0][0] += direction[d][0];
-    body[0][1] += direction[d][1];
+    for(int i = length; i > 0; i--)
+    {
+        body[i][0] = body[i - 1][0];
+        body[i][1] = body[i - 1][1];
+    }
+
+    body[0][0] = body[1][0] + direction[d][0];
+    body[0][1] = body[1][1] + direction[d][1];
+    length++;
 }
 
 bool Snake::selfCollide()
 {
+    int head[2];
+    head[0] = body[0][0];
+    head[1] = body[0][1];
 
+    for(int i = 1; i < length; i++)
+        if(body[i][0] == head[0] && body[i][1] == head[1])
+            return true;
+    return false;
 }
 
 void Snake::shortenLength(int n)
 {
-
+    length -= n;
 }
 
 int Snake::getLength()
