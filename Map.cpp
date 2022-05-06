@@ -91,7 +91,10 @@ void Map::createPoison_()
 void Map::createGate()
 {
     int gatePosA = rand() % wallCount;
-    int gateposB = (gatePosA + rand() % (wallCount - 1)) % wallCount;
+    int gateposB = rand() % (wallCount - 1);
+    if(gatePosA <= gateposB)
+        gateposB++;
+
     int passedWall = 0;
     for(int r = 0; r < rows; r++)
     {
@@ -107,6 +110,14 @@ void Map::createGate()
     }
 }
 
+void Map::removeGate()
+{
+    for(int r = 0; r < rows; r++)
+        for(int c = 0; c < cols; c++)
+            if(board[r][c] == 7)
+                board[r][c] = 1;
+}
+
 int Map::moveToOppositeGate(int** body, int d)
 {
     int r, c;
@@ -115,7 +126,7 @@ int Map::moveToOppositeGate(int** body, int d)
     {
         for(c = 0; c < cols; c++)
         {
-            if(board[r][c] == 7 && r != body[0][0] && c != body[0][1])
+            if(board[r][c] == 7 && (r != body[0][0] || c != body[0][1]))
             {
                 found = true;
                 break;
@@ -133,7 +144,7 @@ int Map::moveToOppositeGate(int** body, int d)
         newC = c + direction[d][1];
         if(0 <= newR && newR < rows && 0 <= newC && newC < cols)
         {
-            if(board[newR][newC] != 1 && board[newR][newC] != 2)
+            if(board[newR][newC] != 1 && board[newR][newC] != 2 && board[newR][newC] != 7)
             {
                 body[0][0] = newR;
                 body[0][1] = newC;

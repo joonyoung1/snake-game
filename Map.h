@@ -14,6 +14,7 @@ public:
     void createGrowth();
     void createPoison();
     void createGate();
+    void removeGate();
     int moveToOppositeGate(int** body, int d);
     void increaseGrowthCount();
     void increasePoisonCount();
