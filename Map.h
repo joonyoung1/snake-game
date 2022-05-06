@@ -8,7 +8,6 @@ class Map{
     void createGrowth_();
     void createPoison_();
 public:
-    Map();
     Map(int r, int c, int** board);
     int getBlock(int r, int c);
     void setBlock(int r, int c, int value);
@@ -19,4 +18,5 @@ public:
     int moveToOppositeGate(int** body, int d);
     void increaseGrowthCount();
     void increasePoisonCount();
+    void remove();
 };

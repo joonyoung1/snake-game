@@ -61,7 +61,6 @@ void Manager::startGame()
         for(int c = 0; c < 21; c++)
             mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
     refresh();
-    this_thread::sleep_for(chrono::milliseconds(500));
 
     d = 0;
     playing = true;
@@ -74,27 +73,35 @@ void Manager::startGame()
         {
         case KEY_UP:
             if(d == 2)
-                endGame();
+                playing = false;
             d = 0;
             break;
         case KEY_RIGHT:
             if(d == 3)
-                endGame();
+                playing = false;
             d = 1;
             break;
         case KEY_DOWN:
             if(d == 0)
-                endGame();
+                playing = false;
             d = 2;
             break;
         case KEY_LEFT:
             if(d == 1)
-                endGame();
+                playing = false;
             d = 3;
         }
     }
 
     moveSnakeThread.join();
+    snake->remove();
+    map->remove();
+    delete snake;
+    delete map;
+
+    curs_set(1);
+    echo();
+    endwin();
 }
 
 void Manager::moveSnake()
@@ -142,7 +149,7 @@ void Manager::actByBlock()
     switch(block)
     {
     case 1: case 2: case 4:
-        endGame();
+        playing = false;
         break;
     case 5:
         map->setBlock(body[length][0], body[length][1], 4);
@@ -156,7 +163,7 @@ void Manager::actByBlock()
         map->increasePoisonCount();
         map->createPoison();
         if(snake->getLength() == 2)
-            endGame();
+            playing = false;
         break;
     case 7:
         usingGate = true;
@@ -165,13 +172,4 @@ void Manager::actByBlock()
         block = map->getBlock(body[0][0], body[0][1]);
         actByBlock();
     }
-}
-
-void Manager::endGame()
-{
-    playing = false;
-    delete snake;
-    delete map;
-    curs_set(1);
-    echo();
 }

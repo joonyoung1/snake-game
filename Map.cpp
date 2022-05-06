@@ -8,11 +8,6 @@ using namespace std;
 
 extern int direction[4][2];
 
-Map::Map()
-{
-    
-}
-
 Map::Map(int r, int c, int** board)
 {
     srand(time(NULL));
@@ -167,4 +162,11 @@ void Map::increaseGrowthCount()
 void Map::increasePoisonCount()
 {
     poisonCount++;
+}
+
+void Map::remove()
+{
+    for(int r = 0; r < rows; r++)
+        delete[] board[r];
+    delete[] board;
 }
