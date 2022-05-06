@@ -8,6 +8,11 @@ using namespace std;
 
 extern int direction[4][2];
 
+Map::Map()
+{
+    
+}
+
 Map::Map(int r, int c, int** board)
 {
     srand(time(NULL));

@@ -2,6 +2,7 @@ class Snake{
     int** body;
     int length;
 public:
+    Snake();
     Snake(int r, int c, int d);
     void move(int d);
     int getLength();

@@ -8,6 +8,7 @@ class Map{
     void createGrowth_();
     void createPoison_();
 public:
+    Map();
     Map(int r, int c, int** board);
     int getBlock(int r, int c);
     void setBlock(int r, int c, int value);

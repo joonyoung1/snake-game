@@ -2,6 +2,11 @@
 
 int direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
+Snake::Snake()
+{
+    
+}
+
 Snake::Snake(int r, int c, int d)
 {
     length = 3;
