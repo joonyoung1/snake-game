@@ -25,7 +25,8 @@ Map::Map(int r, int c, int** board)
 
     createGrowth();
     createPoison();
-    createGate();
+    thread createFirstGateThread(&Map::createFirstGate, this);
+    createFirstGateThread.detach();
 }
 
 int Map::getBlock(int r, int c)
@@ -86,6 +87,12 @@ void Map::createPoison_()
         if(board[r][c] == 6)
             board[r][c] = 0;
     }
+}
+
+void Map::createFirstGate()
+{
+    this_thread::sleep_for(chrono::milliseconds(10000));
+    createGate();
 }
 
 void Map::createGate()
