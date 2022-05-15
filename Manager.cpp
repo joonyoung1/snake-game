@@ -22,6 +22,7 @@ Manager::Manager(int** board, int goalLength, int goalGrowth, int goalPoison, in
     this->goalGrowth = goalGrowth;
     this->goalPoison = goalPoison;
     this->goalGate = goalGate;
+    maxLength = 3;
     gameClear = false;
 }
 
@@ -113,10 +114,10 @@ void Manager::moveSnake()
         for(int r = 0; r < 21; r++)
             for(int c = 0; c < 21; c++)
                 mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
-        mvprintw(0, 50, to_string(snake->getLength()).c_str());
-        mvprintw(1, 50, to_string(map->getGrowthCount()).c_str());
-        mvprintw(2, 50, to_string(map->getPoisonCount()).c_str());
-        mvprintw(3, 50, to_string(map->getGateCount()).c_str());
+        mvprintw(0, 50, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
+        mvprintw(1, 50, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map->getGrowthCount())).c_str());
+        mvprintw(2, 50, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map->getPoisonCount())).c_str());
+        mvprintw(3, 50, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map->getGateCount())).c_str());
         refresh();
 
         this_thread::sleep_for(chrono::milliseconds(250));
@@ -146,6 +147,7 @@ void Manager::actByBlock()
     case 5:
         map->setBlock(body[length][0], body[length][1], 4);
         snake->setLength(length + 1);
+        maxLength = max(maxLength, snake->getLength());
         map->createGrowth();
         break;
     case 6:

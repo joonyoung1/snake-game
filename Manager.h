@@ -6,6 +6,7 @@ class Manager{
     Map* map;
     int d, afterGate;
     int goalLength, goalGrowth, goalPoison, goalGate;
+    int maxLength;
     int** body, ** board;
     bool playing, usingGate, gameClear;
     void moveSnake();
