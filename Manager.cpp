@@ -130,6 +130,7 @@ void Manager::actByBlock()
         snake->setLength(length + 1);
         maxLength = max(maxLength, snake->getLength());
         map->createGrowth();
+        beep();
         break;
     case 6:
         map->setBlock(body[length - 1][0], body[length - 1][1], 0);
@@ -137,6 +138,7 @@ void Manager::actByBlock()
         map->createPoison();
         if(snake->getLength() == 2)
             playing = false;
+        beep();
         break;
     case 7:
         usingGate = true;
