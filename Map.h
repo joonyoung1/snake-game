@@ -2,8 +2,7 @@ class Map{
     int rows;
     int cols;
     int** board;
-    int growthCount;
-    int poisonCount;
+    int growthCount, poisonCount, gateCount;
     int wallCount;
     void createGrowth_();
     void createPoison_();
@@ -17,7 +16,8 @@ public:
     void createGate();
     void removeGate();
     int moveToOppositeGate(int** body, int d);
-    void increaseGrowthCount();
-    void increasePoisonCount();
+    int getGrowthCount();
+    int getPoisonCount();
+    int getGateCount();
     void remove();
 };

@@ -13,8 +13,9 @@ Map::Map(int r, int c, int** board)
     srand(time(NULL));
     rows = r;
     cols = c;
-    growthCount = 0;
-    poisonCount = 0;
+    growthCount = -1;
+    poisonCount = -1;
+    gateCount = 0;
 
     this->board = board;
     wallCount = 0;
@@ -41,6 +42,7 @@ void Map::setBlock(int r, int c, int value)
 
 void Map::createGrowth()
 {
+    growthCount++;
     thread createGrowthThread(&Map::createGrowth_, this);
     createGrowthThread.detach();
 }
@@ -66,6 +68,7 @@ void Map::createGrowth_()
 
 void Map::createPoison()
 {
+    poisonCount++;
     thread createPoisonThread(&Map::createPoison_, this);
     createPoisonThread.detach();
 }
@@ -119,6 +122,7 @@ void Map::createGate()
 
 void Map::removeGate()
 {
+    gateCount++;
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
             if(board[r][c] == 7)
@@ -161,14 +165,19 @@ int Map::moveToOppositeGate(int** body, int d)
     }
 }
 
-void Map::increaseGrowthCount()
+int Map::getGrowthCount()
 {
-    growthCount++;
+    return growthCount;
 }
 
-void Map::increasePoisonCount()
+int Map::getPoisonCount()
 {
-    poisonCount++;
+    return poisonCount;
+}
+
+int Map::getGateCount()
+{
+    return gateCount;
 }
 
 void Map::remove()

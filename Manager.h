@@ -5,12 +5,14 @@ class Manager{
     Snake* snake;
     Map* map;
     int d, afterGate;
-    int** body;
-    bool playing, usingGate;
-public:
-    Manager();
-    void startGame();
+    int goalLength, goalGrowth, goalPoison, goalGate;
+    int** body, ** board;
+    bool playing, usingGate, gameClear;
     void moveSnake();
     void actByBlock();
+    void checkClear();
     void endGame();
+public:
+    Manager(int** board, int goalLength, int goalGrowth, int goalPoison, int goalGate);
+    bool startGame();
 };

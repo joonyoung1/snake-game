@@ -6,9 +6,9 @@
 #include "Manager.h"
 using namespace std;
 
-const char* printTable[] = {" ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
+const char* printTable[] = {"  ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
 
-Manager::Manager()
+Manager::Manager(int** board, int goalLength, int goalGrowth, int goalPoison, int goalGate)
 {
     setlocale(LC_ALL, "");
     initscr();
@@ -16,40 +16,16 @@ Manager::Manager()
     curs_set(0);
     noecho();
 
-    int testMap[21][21] = {{2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2}};
-
-    int **board = new int *[21];
-    for(int i = 0; i < 21; i++)
-    {
-        board[i] = new int[21];
-        for(int j = 0; j < 21; j++)
-            board[i][j] = testMap[i][j];
-    }
     map = new Map(21, 21, board);
     snake = new Snake(10, 10, 1);
+    this->goalLength = goalLength;
+    this->goalGrowth = goalGrowth;
+    this->goalPoison = goalPoison;
+    this->goalGate = goalGate;
+    gameClear = false;
 }
 
-void Manager::startGame()
+bool Manager::startGame()
 {
     int input;
     body = snake->getBody();
@@ -102,6 +78,8 @@ void Manager::startGame()
     curs_set(1);
     echo();
     endwin();
+
+    return clear;
 }
 
 void Manager::moveSnake()
@@ -130,14 +108,28 @@ void Manager::moveSnake()
                 usingGate = false;
             }
         }
-
+        checkClear();
         clear();
         for(int r = 0; r < 21; r++)
             for(int c = 0; c < 21; c++)
                 mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
+        mvprintw(0, 50, to_string(snake->getLength()).c_str());
+        mvprintw(1, 50, to_string(map->getGrowthCount()).c_str());
+        mvprintw(2, 50, to_string(map->getPoisonCount()).c_str());
+        mvprintw(3, 50, to_string(map->getGateCount()).c_str());
         refresh();
 
-        this_thread::sleep_for(chrono::milliseconds(200));
+        this_thread::sleep_for(chrono::milliseconds(250));
+    }
+}
+
+void Manager::checkClear()
+{
+    if(goalLength <= snake->getLength() && goalGrowth <= map->getGrowthCount() && \
+        goalPoison <= map->getPoisonCount() && goalGate <= map->getGateCount())
+    {
+        playing = false;
+        gameClear = true;
     }
 }
 
@@ -154,13 +146,11 @@ void Manager::actByBlock()
     case 5:
         map->setBlock(body[length][0], body[length][1], 4);
         snake->setLength(length + 1);
-        map->increaseGrowthCount();
         map->createGrowth();
         break;
     case 6:
         map->setBlock(body[length - 1][0], body[length - 1][1], 0);
         snake->setLength(length - 1);
-        map->increasePoisonCount();
         map->createPoison();
         if(snake->getLength() == 2)
             playing = false;
