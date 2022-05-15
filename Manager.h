@@ -12,7 +12,7 @@ class Manager{
     void moveSnake();
     void actByBlock();
     void checkClear();
-    void endGame();
+    void printScreen();
 public:
     Manager(int** board, int goalLength, int goalGrowth, int goalPoison, int goalGate);
     bool startGame();

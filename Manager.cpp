@@ -110,27 +110,8 @@ void Manager::moveSnake()
             }
         }
         checkClear();
-        clear();
-        for(int r = 0; r < 21; r++)
-            for(int c = 0; c < 21; c++)
-                mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
-        mvprintw(0, 50, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
-        mvprintw(1, 50, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map->getGrowthCount())).c_str());
-        mvprintw(2, 50, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map->getPoisonCount())).c_str());
-        mvprintw(3, 50, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map->getGateCount())).c_str());
-        refresh();
-
+        printScreen();
         this_thread::sleep_for(chrono::milliseconds(250));
-    }
-}
-
-void Manager::checkClear()
-{
-    if(goalLength <= snake->getLength() && goalGrowth <= map->getGrowthCount() && \
-        goalPoison <= map->getPoisonCount() && goalGate <= map->getGateCount())
-    {
-        playing = false;
-        gameClear = true;
     }
 }
 
@@ -164,4 +145,27 @@ void Manager::actByBlock()
         block = map->getBlock(body[0][0], body[0][1]);
         actByBlock();
     }
+}
+
+void Manager::checkClear()
+{
+    if(goalLength <= maxLength && goalGrowth <= map->getGrowthCount() && \
+        goalPoison <= map->getPoisonCount() && goalGate <= map->getGateCount())
+    {
+        playing = false;
+        gameClear = true;
+    }
+}
+
+void Manager::printScreen()
+{
+    clear();
+    for(int r = 0; r < 21; r++)
+        for(int c = 0; c < 21; c++)
+            mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
+    mvprintw(0, 50, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
+    mvprintw(1, 50, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map->getGrowthCount())).c_str());
+    mvprintw(2, 50, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map->getPoisonCount())).c_str());
+    mvprintw(3, 50, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map->getGateCount())).c_str());
+    refresh();
 }

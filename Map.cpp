@@ -100,23 +100,66 @@ void Map::createFirstGate()
 
 void Map::createGate()
 {
-    int gatePosA = rand() % wallCount;
-    int gateposB = rand() % (wallCount - 1);
-    if(gatePosA <= gateposB)
-        gateposB++;
+    int gatePosA, gatePosB;
+    int passedWall;
+    int rA, cA, rB, cB, rN, cN;
+    int rExitA, cExitA, rExitB, cExitB;
+    int ableExitCountA, ableExitCountB;
 
-    int passedWall = 0;
-    for(int r = 0; r < rows; r++)
+    while(true)
     {
-        for(int c = 0; c < cols; c++)
+        gatePosA = rand() % wallCount;
+        gatePosB = rand() % (wallCount - 1);
+        if(gatePosA <= gatePosB)
+            gatePosB++;
+        passedWall = 0;
+        for(int r = 0; r < rows; r++)
         {
-            if(board[r][c] == 1)
+            for(int c = 0; c < cols; c++)
             {
-                if(passedWall == gatePosA || passedWall == gateposB)
-                    board[r][c] = 7;
-                passedWall++;
+                if(board[r][c] == 1)
+                {
+                    if(passedWall == gatePosA)
+                    {
+                        rA = r;
+                        cA = c;
+                    }
+                    else if(passedWall == gatePosB)
+                    {
+                        rB = r;
+                        cB = c;
+                    }
+                    passedWall++;
+                }
             }
         }
+
+        ableExitCountA = ableExitCountB = 0;
+        for(int d = 0; d < 4; d++)
+        {
+            rN = rA + direction[d][0];
+            cN = cA + direction[d][1];
+            if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
+            {
+                ableExitCountA++;
+                rExitA = rN;
+                cExitA = cN;
+            }
+            rN = rB + direction[d][0];
+            cN = cB + direction[d][1];
+            if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
+            {
+                ableExitCountB++;
+                rExitB = rN;
+                cExitB = cN;
+            }
+        }
+
+        if(ableExitCountA == 1 && ableExitCountB == 1 && rExitA == rExitB && cExitA == cExitB)
+            continue;
+        board[rA][cA] = 7;
+        board[rB][cB] = 7;
+        break;
     }
 }
 
