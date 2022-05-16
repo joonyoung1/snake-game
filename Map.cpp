@@ -51,7 +51,8 @@ void Map::createGrowth_()
 {
     int r, c;
     int numAtCreated = growthCount;
-    while(numAtCreated == growthCount)
+    int stageAtCreated = playingStage;
+    while(stageAtCreated == playingStage && numAtCreated == growthCount)
     {
         do
         {
@@ -77,7 +78,8 @@ void Map::createPoison_()
 {
     int r, c;
     int numAtCreated = poisonCount;
-    while(numAtCreated == poisonCount)
+    int stageAtCreated = playingStage;
+    while(stageAtCreated == playingStage && numAtCreated == poisonCount)
     {
         do
         {
@@ -94,8 +96,10 @@ void Map::createPoison_()
 
 void Map::createFirstGate()
 {
+    int stageAtCreated = playingStage;
     this_thread::sleep_for(chrono::milliseconds(10000));
-    createGate();
+    if(stageAtCreated == playingStage)
+        createGate();
 }
 
 void Map::createGate()
@@ -225,7 +229,5 @@ int Map::getGateCount()
 
 void Map::remove()
 {
-    for(int r = 0; r < rows; r++)
-        delete[] board[r];
-    delete[] board;
+
 }

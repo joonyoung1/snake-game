@@ -1,8 +1,11 @@
+extern int playingStage;
+extern const int spawnInfos[4][3];
+
 class Snake{
     int** body;
     int length;
 public:
-    Snake(int r, int c, int d);
+    Snake();
     void move(int d);
     int getLength();
     void setLength(int n);

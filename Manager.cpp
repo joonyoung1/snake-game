@@ -6,9 +6,7 @@
 #include "Manager.h"
 using namespace std;
 
-const char* printTable[] = {"  ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
-
-Manager::Manager(int** board, int goalLength, int goalGrowth, int goalPoison, int goalGate)
+Manager::Manager(int** board)
 {
     setlocale(LC_ALL, "");
     initscr();
@@ -16,14 +14,18 @@ Manager::Manager(int** board, int goalLength, int goalGrowth, int goalPoison, in
     curs_set(0);
     noecho();
 
-    map = new Map(21, 21, board);
-    snake = new Snake(10, 10, 1);
-    this->goalLength = goalLength;
-    this->goalGrowth = goalGrowth;
-    this->goalPoison = goalPoison;
-    this->goalGate = goalGate;
+    rows = mapSizeInfos[playingStage][0];
+    cols = mapSizeInfos[playingStage][1];
+    resizeterm(rows, cols*2 + 100);
+    map = new Map(rows, cols, board);
+    snake = new Snake();
+    goalLength = missionInfos[playingStage][0];
+    goalGrowth = missionInfos[playingStage][1];
+    goalPoison = missionInfos[playingStage][2];
+    goalGate = missionInfos[playingStage][3];
     maxLength = 3;
     gameClear = false;
+    printScreen();
 }
 
 bool Manager::startGame()
@@ -39,7 +41,7 @@ bool Manager::startGame()
             mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
     refresh();
 
-    d = 0;
+    d = spawnInfos[playingStage][2];
     playing = true;
     thread moveSnakeThread(&Manager::moveSnake, this);
 
@@ -76,11 +78,14 @@ bool Manager::startGame()
     delete snake;
     delete map;
 
+    clear();
+    refresh();
     curs_set(1);
     echo();
     endwin();
 
-    return clear;
+    // return gameClear;
+    return true;
 }
 
 void Manager::moveSnake()
@@ -111,7 +116,7 @@ void Manager::moveSnake()
         }
         checkClear();
         printScreen();
-        this_thread::sleep_for(chrono::milliseconds(250));
+        this_thread::sleep_for(chrono::milliseconds(200));
     }
 }
 
@@ -162,12 +167,12 @@ void Manager::checkClear()
 void Manager::printScreen()
 {
     clear();
-    for(int r = 0; r < 21; r++)
-        for(int c = 0; c < 21; c++)
+    for(int r = 0; r < rows; r++)
+        for(int c = 0; c < cols; c++)
             mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
-    mvprintw(0, 50, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
-    mvprintw(1, 50, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map->getGrowthCount())).c_str());
-    mvprintw(2, 50, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map->getPoisonCount())).c_str());
-    mvprintw(3, 50, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map->getGateCount())).c_str());
+    mvprintw(0, cols*2 + 5, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
+    mvprintw(1, cols*2 + 5, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map->getGrowthCount())).c_str());
+    mvprintw(2, cols*2 + 5, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map->getPoisonCount())).c_str());
+    mvprintw(3, cols*2 + 5, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map->getGateCount())).c_str());
     refresh();
 }

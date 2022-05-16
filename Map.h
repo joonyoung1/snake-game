@@ -1,6 +1,7 @@
+extern int playingStage;
+
 class Map{
-    int rows;
-    int cols;
+    int rows, cols;
     int** board;
     int growthCount, poisonCount, gateCount;
     int wallCount;
