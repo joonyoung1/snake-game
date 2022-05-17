@@ -1,14 +1,13 @@
 #include "Snake.h"
 #include "Map.h"
+#include "Constants.h"
 
-extern const char* printTable[];
-extern const int missionInfos[4][4];
-extern const int mapSizeInfos[4][2];
-extern const int mapInfos[4][35][35];
-
-class Manager{
+class Manager
+{
+private:
     Snake* snake;
     Map* map;
+    int stage;
     int d, afterGate;
     int goalLength, goalGrowth, goalPoison, goalGate;
     int rows, cols;
@@ -20,6 +19,6 @@ class Manager{
     void checkClear();
     void printScreen();
 public:
-    Manager(int** board);
+    Manager(int** board, int stage);
     bool startGame();
 };

@@ -6,7 +6,7 @@
 #include "Manager.h"
 using namespace std;
 
-Manager::Manager(int** board)
+Manager::Manager(int** board, int stage)
 {
     setlocale(LC_ALL, "");
     initscr();
@@ -14,15 +14,16 @@ Manager::Manager(int** board)
     curs_set(0);
     noecho();
 
-    rows = mapSizeInfos[playingStage][0];
-    cols = mapSizeInfos[playingStage][1];
+    this->stage = stage;
+    rows = mapSizeInfos[stage][0];
+    cols = mapSizeInfos[stage][1];
     resizeterm(rows, cols*2 + 100);
-    map = new Map(rows, cols, board);
-    snake = new Snake();
-    goalLength = missionInfos[playingStage][0];
-    goalGrowth = missionInfos[playingStage][1];
-    goalPoison = missionInfos[playingStage][2];
-    goalGate = missionInfos[playingStage][3];
+    map = new Map(board);
+    snake = new Snake(stage);
+    goalLength = missionInfos[stage][0];
+    goalGrowth = missionInfos[stage][1];
+    goalPoison = missionInfos[stage][2];
+    goalGate = missionInfos[stage][3];
     maxLength = 3;
     gameClear = false;
     printScreen();
@@ -41,7 +42,7 @@ bool Manager::startGame()
             mvprintw(r, c*2, printTable[map->getBlock(r, c)]);
     refresh();
 
-    d = spawnInfos[playingStage][2];
+    d = spawnInfos[stage][2];
     playing = true;
     thread moveSnakeThread(&Manager::moveSnake, this);
 

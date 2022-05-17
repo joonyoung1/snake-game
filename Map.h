@@ -1,6 +1,10 @@
-extern int playingStage;
+#include "StageTracker.h"
+#include "Constants.h"
 
-class Map{
+class Map
+{
+private:
+    StageTracker* stageTracker;
     int rows, cols;
     int** board;
     int growthCount, poisonCount, gateCount;
@@ -8,7 +12,7 @@ class Map{
     void createGrowth_();
     void createPoison_();
 public:
-    Map(int r, int c, int** board);
+    Map(int** board);
     int getBlock(int r, int c);
     void setBlock(int r, int c, int value);
     void createGrowth();

@@ -1,11 +1,14 @@
-extern int playingStage;
-extern const int spawnInfos[4][3];
+#include "StageTracker.h"
+#include "Constants.h"
 
-class Snake{
+class Snake
+{
+private:
     int** body;
+    int stage;
     int length;
 public:
-    Snake();
+    Snake(int stage);
     void move(int d);
     int getLength();
     void setLength(int n);

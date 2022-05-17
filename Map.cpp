@@ -6,13 +6,12 @@
 #include "Map.h"
 using namespace std;
 
-extern int direction[4][2];
-
-Map::Map(int r, int c, int** board)
+Map::Map(int** board)
 {
     srand(time(NULL));
-    rows = r;
-    cols = c;
+    stageTracker = StageTracker::getStageTracker();
+    rows = mapSizeInfos[stageTracker->getStage()][0];
+    cols = mapSizeInfos[stageTracker->getStage()][1];
     growthCount = -1;
     poisonCount = -1;
     gateCount = 0;
@@ -51,8 +50,8 @@ void Map::createGrowth_()
 {
     int r, c;
     int numAtCreated = growthCount;
-    int stageAtCreated = playingStage;
-    while(stageAtCreated == playingStage && numAtCreated == growthCount)
+    int stageAtCreated = stageTracker->getStage();
+    while(stageAtCreated == stageTracker->getStage() && numAtCreated == growthCount)
     {
         do
         {
@@ -78,8 +77,8 @@ void Map::createPoison_()
 {
     int r, c;
     int numAtCreated = poisonCount;
-    int stageAtCreated = playingStage;
-    while(stageAtCreated == playingStage && numAtCreated == poisonCount)
+    int stageAtCreated = stageTracker->getStage();
+    while(stageAtCreated == stageTracker->getStage() && numAtCreated == poisonCount)
     {
         do
         {
@@ -96,9 +95,9 @@ void Map::createPoison_()
 
 void Map::createFirstGate()
 {
-    int stageAtCreated = playingStage;
+    int stageAtCreated = stageTracker->getStage();
     this_thread::sleep_for(chrono::milliseconds(10000));
-    if(stageAtCreated == playingStage)
+    if(stageAtCreated == stageTracker->getStage())
         createGate();
 }
 

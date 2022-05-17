@@ -1,12 +1,10 @@
 #include "Snake.h"
 
-int direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-
-Snake::Snake()
+Snake::Snake(int stage)
 {
-    int r = spawnInfos[playingStage][0];
-    int c = spawnInfos[playingStage][1];
-    int d = spawnInfos[playingStage][2];
+    int r = spawnInfos[stage][0];
+    int c = spawnInfos[stage][1];
+    int d = spawnInfos[stage][2];
     length = 3;
     d = (d + 2) % 4;
 
