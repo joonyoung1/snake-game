@@ -21,6 +21,13 @@ Snake::Snake(int stage)
     }
 }
 
+Snake::~Snake()
+{
+    for(int i = 0; i < 1000; i++)
+        delete[] body[i];
+    delete[] body;
+}
+
 void Snake::move(int d)
 {
     for(int i = length; i > 0; i--)
@@ -52,11 +59,4 @@ void Snake::setHead(int r, int c)
 {
     body[0][0] = r;
     body[0][1] = c;
-}
-
-void Snake::remove()
-{
-    for(int i = 0; i < 1000; i++)
-        delete[] body[i];
-    delete[] body;
 }

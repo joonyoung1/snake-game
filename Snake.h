@@ -9,6 +9,7 @@ private:
     int length;
 public:
     Snake(int stage);
+    ~Snake();
     void move(int d);
     int getLength();
     void setLength(int n);
