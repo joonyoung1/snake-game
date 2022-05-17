@@ -14,15 +14,14 @@ Manager::Manager(int** board, int stage):map(board), snake(stage)
     curs_set(0);
     noecho();
 
-    rows = mapSizeInfos[stage][0];
-    cols = mapSizeInfos[stage][1];
-    resizeterm(rows, cols*2 + 100);
-    goalLength = missionInfos[stage][0];
-    goalGrowth = missionInfos[stage][1];
-    goalPoison = missionInfos[stage][2];
-    goalGate = missionInfos[stage][3];
+    rows = info::mapSize[stage][0];
+    cols = info::mapSize[stage][1];
+    goalLength = info::mission[stage][0];
+    goalGrowth = info::mission[stage][1];
+    goalPoison = info::mission[stage][2];
+    goalGate = info::mission[stage][3];
     maxLength = 3;
-    d = spawnInfos[stage][2];
+    d = info::spawn[stage][2];
     gameClear = false;
     playing = true;
     printScreen();
@@ -38,7 +37,7 @@ bool Manager::startGame()
 
     for(int r = 0; r < 21; r++)
         for(int c = 0; c < 21; c++)
-            mvprintw(r, c*2, printTable[map.getBlock(r, c)]);
+            mvprintw(r, c*2, info::printTable[map.getBlock(r, c)]);
     refresh();
     thread moveSnakeThread(&Manager::moveSnake, this);
 
@@ -49,22 +48,34 @@ bool Manager::startGame()
         {
         case KEY_UP:
             if(d == 2)
+            {
                 playing = false;
+                getch();
+            }
             d = 0;
             break;
         case KEY_RIGHT:
             if(d == 3)
+            {
                 playing = false;
+                getch();
+            }
             d = 1;
             break;
         case KEY_DOWN:
             if(d == 0)
+            {
                 playing = false;
+                getch();
+            }
             d = 2;
             break;
         case KEY_LEFT:
             if(d == 1)
+            {
                 playing = false;
+                getch();
+            }
             d = 3;
         }
     }
@@ -163,7 +174,7 @@ void Manager::printScreen()
     clear();
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
-            mvprintw(r, c*2, printTable[map.getBlock(r, c)]);
+            mvprintw(r, c*2, info::printTable[map.getBlock(r, c)]);
     mvprintw(0, cols*2 + 5, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
     mvprintw(1, cols*2 + 5, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map.getGrowthCount())).c_str());
     mvprintw(2, cols*2 + 5, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map.getPoisonCount())).c_str());

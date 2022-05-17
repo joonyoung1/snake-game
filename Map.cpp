@@ -10,8 +10,8 @@ Map::Map(int** board)
 {
     srand(time(NULL));
     stageTracker = StageTracker::getStageTracker();
-    rows = mapSizeInfos[stageTracker->getStage()][0];
-    cols = mapSizeInfos[stageTracker->getStage()][1];
+    rows = info::mapSize[stageTracker->getStage()][0];
+    cols = info::mapSize[stageTracker->getStage()][1];
     growthCount = -1;
     poisonCount = -1;
     gateCount = 0;
@@ -140,16 +140,16 @@ void Map::createGate()
         ableExitCountA = ableExitCountB = 0;
         for(int d = 0; d < 4; d++)
         {
-            rN = rA + direction[d][0];
-            cN = cA + direction[d][1];
+            rN = rA + info::direction[d][0];
+            cN = cA + info::direction[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountA++;
                 rExitA = rN;
                 cExitA = cN;
             }
-            rN = rB + direction[d][0];
-            cN = cB + direction[d][1];
+            rN = rB + info::direction[d][0];
+            cN = cB + info::direction[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountB++;
@@ -197,8 +197,8 @@ int Map::moveToOppositeGate(int** body, int d)
     for(int i = 0; i < 4; i++)
     {
         d = (d + i) % 4;
-        newR = r + direction[d][0];
-        newC = c + direction[d][1];
+        newR = r + info::direction[d][0];
+        newC = c + info::direction[d][1];
         if(0 <= newR && newR < rows && 0 <= newC && newC < cols)
         {
             if(board[newR][newC] != 1 && board[newR][newC] != 2 && board[newR][newC] != 7)
