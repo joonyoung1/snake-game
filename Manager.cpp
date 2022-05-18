@@ -41,43 +41,12 @@ bool Manager::startGame()
     refresh();
     thread moveSnakeThread(&Manager::moveSnake, this);
 
+    int arrowToDirection[4] = {2, 0, 3, 1};
     while(playing)
     {
         input = getch();
-        switch(input)
-        {
-        case KEY_UP:
-            if(d == 2)
-            {
-                playing = false;
-                getch();
-            }
-            d = 0;
-            break;
-        case KEY_RIGHT:
-            if(d == 3)
-            {
-                playing = false;
-                getch();
-            }
-            d = 1;
-            break;
-        case KEY_DOWN:
-            if(d == 0)
-            {
-                playing = false;
-                getch();
-            }
-            d = 2;
-            break;
-        case KEY_LEFT:
-            if(d == 1)
-            {
-                playing = false;
-                getch();
-            }
-            d = 3;
-        }
+        mvprintw(4, cols*2 + 5, to_string(input).c_str());
+        d = arrowToDirection[input - 258];
     }
 
     moveSnakeThread.join();
@@ -87,8 +56,7 @@ bool Manager::startGame()
     echo();
     endwin();
 
-    // return gameClear;
-    return true;
+    return gameClear;
 }
 
 void Manager::moveSnake()
