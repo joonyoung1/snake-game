@@ -1,10 +1,12 @@
 #include <iostream>
+#include <mutex>
 #include "Manager.h"
 using namespace std;
 
 int main()
 {
     bool result;
+    mutex boardMutex;
     StageTracker* stageTracker = StageTracker::getStageTracker();
     cout << "\e[8;" << info::screenHeight << ";" << info::screenWidth <<  "t";
 
@@ -17,7 +19,7 @@ int main()
             for(int c = 0; c < info::mapSize[i][1]; c++)
                 board[r][c] = info::map[i][r][c];
         }
-        Manager manager = Manager(board, i);
+        Manager manager = Manager(board, i, boardMutex);
         result = manager.startGame();
 
         for(int r = 0; r < info::mapSize[i][0]; r++)

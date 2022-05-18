@@ -6,7 +6,7 @@
 #include "Manager.h"
 using namespace std;
 
-Manager::Manager(int** board, int stage):map(board), snake(stage)
+Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMutex), snake(stage), boardMutex(boardMutex)
 {
     setlocale(LC_ALL, "");
     initscr();
@@ -71,6 +71,7 @@ void Manager::moveSnake()
         body = snake.getBody();
         length = snake.getLength();
 
+        boardMutex.lock();
         map.setBlock(body[length][0], body[length][1], 0);
         actByBlock();
         map.setBlock(body[0][0], body[0][1], 3);
@@ -88,6 +89,7 @@ void Manager::moveSnake()
         }
         checkClear();
         printScreen();
+        boardMutex.unlock();
         this_thread::sleep_for(chrono::milliseconds(200));
     }
 }

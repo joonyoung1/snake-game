@@ -1,12 +1,13 @@
 #include <iostream>
 #include <stdlib.h>
 #include <thread>
+#include <mutex>
 #include <chrono>
 #include <time.h>
 #include "Map.h"
 using namespace std;
 
-Map::Map(int** board)
+Map::Map(int** board, mutex& boardMutex):boardMutex(boardMutex)
 {
     srand(time(NULL));
     stageTracker = StageTracker::getStageTracker();
@@ -53,6 +54,7 @@ void Map::createGrowth_()
     int stageAtCreated = stageTracker->getStage();
     while(stageAtCreated == stageTracker->getStage() && numAtCreated == growthCount)
     {
+        boardMutex.lock();
         do
         {
             r = rand() % rows;
@@ -60,9 +62,12 @@ void Map::createGrowth_()
         }
         while(board[r][c] != 0);
         board[r][c] = 5;
+        boardMutex.unlock();
         this_thread::sleep_for(chrono::milliseconds(5000));
+        boardMutex.lock();
         if(board[r][c] == 5)
             board[r][c] = 0;
+        boardMutex.unlock();
     }
 }
 
@@ -80,6 +85,7 @@ void Map::createPoison_()
     int stageAtCreated = stageTracker->getStage();
     while(stageAtCreated == stageTracker->getStage() && numAtCreated == poisonCount)
     {
+        boardMutex.lock();
         do
         {
             r = rand() % rows;
@@ -87,9 +93,12 @@ void Map::createPoison_()
         }
         while(board[r][c] != 0);
         board[r][c] = 6;
+        boardMutex.unlock();
         this_thread::sleep_for(chrono::milliseconds(5000));
+        boardMutex.lock();
         if(board[r][c] == 6)
             board[r][c] = 0;
+        boardMutex.unlock();
     }
 }
 
@@ -97,8 +106,10 @@ void Map::createFirstGate()
 {
     int stageAtCreated = stageTracker->getStage();
     this_thread::sleep_for(chrono::milliseconds(10000));
+    boardMutex.lock();
     if(stageAtCreated == stageTracker->getStage())
         createGate();
+    boardMutex.unlock();
 }
 
 void Map::createGate()
