@@ -2,8 +2,6 @@
 #include <mutex>
 #include <ncurses.h>
 #include "Manager.h"
-#include <thread>
-#include <chrono>
 using namespace std;
 
 int main()
