@@ -2,6 +2,8 @@
 #include <mutex>
 #include <ncurses.h>
 #include "Manager.h"
+#include <thread>
+#include <chrono>
 using namespace std;
 
 int main()
@@ -9,8 +11,7 @@ int main()
     bool result;
     mutex boardMutex;
     StageTracker* stageTracker = StageTracker::getStageTracker();
-    cout << "\e[8;" << info::screenHeight << ";" << info::screenWidth <<  "t";
-
+    system("resize -s 35 110");
     setlocale(LC_ALL, "");
     initscr();
     keypad(stdscr, TRUE);
