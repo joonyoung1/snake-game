@@ -26,5 +26,4 @@ public:
     int getGrowthCount();
     int getPoisonCount();
     int getGateCount();
-    void remove();
 };

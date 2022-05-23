@@ -8,5 +8,5 @@ private:
 public:
     static StageTracker* getStageTracker();
     int getStage();
-    int nextStage();
+    int setStage(int stage);
 };

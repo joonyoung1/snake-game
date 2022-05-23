@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mutex>
+#include <ncurses.h>
 #include "Manager.h"
 using namespace std;
 
@@ -9,6 +10,12 @@ int main()
     mutex boardMutex;
     StageTracker* stageTracker = StageTracker::getStageTracker();
     cout << "\e[8;" << info::screenHeight << ";" << info::screenWidth <<  "t";
+
+    setlocale(LC_ALL, "");
+    initscr();
+    keypad(stdscr, TRUE);
+    curs_set(0);
+    noecho();
 
     for(int i = 0; i < 4; i++)
     {
@@ -28,8 +35,13 @@ int main()
 
         if(!result)
             break;
-        stageTracker->nextStage();
+        stageTracker->setStage(stageTracker->getStage() + 1);
     }
 
+    clear();
+    refresh();
+    curs_set(1);
+    echo();
+    endwin();
     return 0;
 }

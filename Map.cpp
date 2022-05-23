@@ -3,7 +3,6 @@
 #include <thread>
 #include <mutex>
 #include <chrono>
-#include <time.h>
 #include "Map.h"
 using namespace std;
 
@@ -52,6 +51,7 @@ void Map::createGrowth_()
     int r, c;
     int numAtCreated = growthCount;
     int stageAtCreated = stageTracker->getStage();
+    chrono::system_clock::time_point start = chrono::system_clock::now();
     while(stageAtCreated == stageTracker->getStage() && numAtCreated == growthCount)
     {
         boardMutex.lock();
@@ -63,11 +63,12 @@ void Map::createGrowth_()
         while(board[r][c] != 0);
         board[r][c] = 5;
         boardMutex.unlock();
-        this_thread::sleep_for(chrono::milliseconds(5000));
+        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
         boardMutex.lock();
         if(board[r][c] == 5)
             board[r][c] = 0;
         boardMutex.unlock();
+        start = chrono::system_clock::now();
     }
 }
 
@@ -83,6 +84,7 @@ void Map::createPoison_()
     int r, c;
     int numAtCreated = poisonCount;
     int stageAtCreated = stageTracker->getStage();
+    chrono::system_clock::time_point start = chrono::system_clock::now();
     while(stageAtCreated == stageTracker->getStage() && numAtCreated == poisonCount)
     {
         boardMutex.lock();
@@ -94,11 +96,12 @@ void Map::createPoison_()
         while(board[r][c] != 0);
         board[r][c] = 6;
         boardMutex.unlock();
-        this_thread::sleep_for(chrono::milliseconds(5000));
+        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
         boardMutex.lock();
         if(board[r][c] == 6)
             board[r][c] = 0;
         boardMutex.unlock();
+        start = chrono::system_clock::now();
     }
 }
 
@@ -106,10 +109,12 @@ void Map::createFirstGate()
 {
     int stageAtCreated = stageTracker->getStage();
     this_thread::sleep_for(chrono::milliseconds(10000));
-    boardMutex.lock();
     if(stageAtCreated == stageTracker->getStage())
+    {
+        boardMutex.lock();
         createGate();
-    boardMutex.unlock();
+        boardMutex.unlock();
+    }
 }
 
 void Map::createGate()
@@ -171,6 +176,7 @@ void Map::createGate()
 
         if(ableExitCountA == 1 && ableExitCountB == 1 && rExitA == rExitB && cExitA == cExitB)
             continue;
+
         board[rA][cA] = 7;
         board[rB][cB] = 7;
         break;
@@ -235,9 +241,4 @@ int Map::getPoisonCount()
 int Map::getGateCount()
 {
     return gateCount;
-}
-
-void Map::remove()
-{
-
 }

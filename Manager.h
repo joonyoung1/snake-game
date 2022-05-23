@@ -9,6 +9,8 @@ private:
     Snake snake;
     Map map;
     std::mutex& boardMutex;
+    WINDOW* boardWin;
+    WINDOW* missionWin;
     int d, afterGate;
     int goalLength, goalGrowth, goalPoison, goalGate;
     int rows, cols;

@@ -8,12 +8,6 @@ using namespace std;
 
 Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMutex), snake(stage), boardMutex(boardMutex)
 {
-    setlocale(LC_ALL, "");
-    initscr();
-    keypad(stdscr, TRUE);
-    curs_set(0);
-    noecho();
-
     rows = info::mapSize[stage][0];
     cols = info::mapSize[stage][1];
     goalLength = info::mission[stage][0];
@@ -24,6 +18,9 @@ Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMute
     d = info::spawn[stage][2];
     gameClear = false;
     playing = true;
+
+    boardWin = newwin(rows, cols * 2, (35 - rows) / 2, (35 - cols) / 2);
+    missionWin = newwin(5, 50, (35 - rows) / 2, (35 - cols) / 2 + cols * 2 + 3);
     printScreen();
 }
 
@@ -34,28 +31,22 @@ bool Manager::startGame()
     map.setBlock(body[0][0], body[0][1], 3);
     for(int i = 1; i < snake.getLength(); i++)
         map.setBlock(body[i][0], body[i][1], 4);
-
-    for(int r = 0; r < 21; r++)
-        for(int c = 0; c < 21; c++)
-            mvprintw(r, c*2, info::printTable[map.getBlock(r, c)]);
-    refresh();
     thread moveSnakeThread(&Manager::moveSnake, this);
 
     int arrowToDirection[4] = {2, 0, 3, 1};
     while(playing)
     {
         input = getch();
-        mvprintw(4, cols*2 + 5, to_string(input).c_str());
         d = arrowToDirection[input - 258];
     }
 
     moveSnakeThread.join();
-    clear();
-    refresh();
-    curs_set(1);
-    echo();
-    endwin();
-
+    wclear(boardWin);
+    wclear(missionWin);
+    wrefresh(boardWin);
+    wrefresh(missionWin);
+    delwin(boardWin);
+    delwin(missionWin);
     return gameClear;
 }
 
@@ -64,18 +55,25 @@ void Manager::moveSnake()
     int length, block;
     usingGate = false;
     int** body;
+    chrono::system_clock::time_point start;
 
     while(playing)
     {
+        start = chrono::system_clock::now();
         snake.move(d);
         body = snake.getBody();
         length = snake.getLength();
 
         boardMutex.lock();
         map.setBlock(body[length][0], body[length][1], 0);
+        boardMutex.unlock();
+
         actByBlock();
+
+        boardMutex.lock();
         map.setBlock(body[0][0], body[0][1], 3);
         map.setBlock(body[1][0], body[1][1], 4);
+        boardMutex.unlock();
 
         if(usingGate)
         {
@@ -89,8 +87,7 @@ void Manager::moveSnake()
         }
         checkClear();
         printScreen();
-        boardMutex.unlock();
-        this_thread::sleep_for(chrono::milliseconds(200));
+        this_thread::sleep_for(chrono::milliseconds(200) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
     }
 }
 
@@ -141,13 +138,21 @@ void Manager::checkClear()
 
 void Manager::printScreen()
 {
-    clear();
+    wclear(boardWin);
+    wclear(missionWin);
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
-            mvprintw(r, c*2, info::printTable[map.getBlock(r, c)]);
-    mvprintw(0, cols*2 + 5, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
-    mvprintw(1, cols*2 + 5, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map.getGrowthCount())).c_str());
-    mvprintw(2, cols*2 + 5, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map.getPoisonCount())).c_str());
-    mvprintw(3, cols*2 + 5, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map.getGateCount())).c_str());
-    refresh();
+        {
+            boardMutex.lock();
+            mvwprintw(boardWin, r, c*2, info::printTable[map.getBlock(r, c)]);
+            boardMutex.unlock();
+        }
+    boardMutex.lock();
+    mvwprintw(missionWin, 0, 0, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
+    mvwprintw(missionWin, 1, 0, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map.getGrowthCount())).c_str());
+    mvwprintw(missionWin, 2, 0, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map.getPoisonCount())).c_str());
+    mvwprintw(missionWin, 3, 0, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map.getGateCount())).c_str());
+    boardMutex.unlock();
+    wrefresh(boardWin);
+    wrefresh(missionWin);
 }

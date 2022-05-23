@@ -16,7 +16,7 @@ int StageTracker::getStage()
     return stage;
 }
 
-int StageTracker::nextStage()
+int StageTracker::setStage(int stage)
 {
-    stage++;
+    this->stage = stage;
 }
