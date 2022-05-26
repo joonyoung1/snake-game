@@ -1,23 +1,46 @@
 #include "Constants.h"
 
-const int info::direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-const char* info::printTable[8] = {"  ", "\u25A0", "\u25A0", "\u25CF", "\u29BF", "\U0001F34E", "\u2620", "\U0001F6AA"};
-const int info::spawn[4][3] = \
+const int design::title[5][30] = \
+    {{1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0},
+    {1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0},
+    {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0}};
+const int design::titleHeight = 5;
+const int design::titleWidth = 30;
+const char* design::SPACE = "\u2800";
+const char* design::BLOCK = "\u25A0";
+const char* design::HEAD = "\u25CF";
+const char* design::BODY = "\u29BF";
+const char* design::GROWTH = "\U0001F34E";
+const char* design::POISON = "\u2620";
+const char* design::GATE = "\U0001F6AA";
+const char* design::UPPER_LEFT = "\u25e4";
+const char* design::LOWER_RIGHT = "\u25e2";
+const char* design::PLAY_MENU = "\uff30\uff2c\uff21\uff39";
+const char* design::RANK_MENU = "\uff32\uff21\uff2e\uff2b";
+const char* design::QUIT_MENU = "\uff31\uff35\uff29\uff34";
+const int design::MENU_GAP = 24;
+
+const int gameInfo::direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+const char* gameInfo::printTable[8] = \
+{design::SPACE, design::BLOCK, design::BLOCK, design::HEAD, design::BODY, design::GROWTH, design::POISON, design::GATE};
+const int gameInfo::spawn[4][3] = \
     {{10, 10, 1},
     {13, 7, 0},
     {14, 11, 1},
     {17, 14, 1}};
-const int info::mission[4][4] = \
+const int gameInfo::mission[4][4] = \
     {{3, 2, 0, 0},
     {3, 2, 0, 0},
     {3, 2, 0, 0},
     {3, 2, 0, 0}};
-const int info::mapSize[4][2] = \
+const int gameInfo::mapSize[4][2] = \
     {{21, 21},
     {25, 25},
     {30, 30},
     {35, 35}};
-const int info::map[4][35][35] = \
+const int gameInfo::map[4][35][35] = \
     {{{2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -129,5 +152,5 @@ const int info::map[4][35][35] = \
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2}}};
-const int info::screenHeight = 35;
-const int info::screenWidth = 110;
+const int gameInfo::screenHeight = 35;
+const int gameInfo::screenWidth = 110;

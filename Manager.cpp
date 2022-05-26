@@ -1,6 +1,5 @@
 #include <iostream>
 #include <ncurses.h>
-#include <clocale>
 #include <thread>
 #include <chrono>
 #include "Manager.h"
@@ -8,20 +7,19 @@ using namespace std;
 
 Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMutex), snake(stage), boardMutex(boardMutex)
 {
-    rows = info::mapSize[stage][0];
-    cols = info::mapSize[stage][1];
-    goalLength = info::mission[stage][0];
-    goalGrowth = info::mission[stage][1];
-    goalPoison = info::mission[stage][2];
-    goalGate = info::mission[stage][3];
+    rows = gameInfo::mapSize[stage][0];
+    cols = gameInfo::mapSize[stage][1];
+    goalLength = gameInfo::mission[stage][0];
+    goalGrowth = gameInfo::mission[stage][1];
+    goalPoison = gameInfo::mission[stage][2];
+    goalGate = gameInfo::mission[stage][3];
     maxLength = 3;
-    d = info::spawn[stage][2];
+    d = gameInfo::spawn[stage][2];
     gameClear = false;
     playing = true;
 
-    boardWin = newwin(rows, cols * 2, (35 - rows) / 2, (35 - cols) / 2);
-    missionWin = newwin(5, 50, (35 - rows) / 2, (35 - cols) / 2 + cols * 2 + 3);
-    printScreen();
+    boardWin = newwin(rows, cols * 2, (35 - rows) / 2, 35 - cols);
+    missionWin = newwin(4, 35, (35 - rows) / 2, 38 + cols);
 }
 
 bool Manager::startGame()
@@ -37,7 +35,8 @@ bool Manager::startGame()
     while(playing)
     {
         input = getch();
-        d = arrowToDirection[input - 258];
+        if(KEY_DOWN <= input && input <= KEY_RIGHT)
+            d = arrowToDirection[input - KEY_DOWN];
     }
 
     moveSnakeThread.join();
@@ -144,7 +143,7 @@ void Manager::printScreen()
         for(int c = 0; c < cols; c++)
         {
             boardMutex.lock();
-            mvwprintw(boardWin, r, c*2, info::printTable[map.getBlock(r, c)]);
+            mvwprintw(boardWin, r, c*2, gameInfo::printTable[map.getBlock(r, c)]);
             boardMutex.unlock();
         }
     boardMutex.lock();

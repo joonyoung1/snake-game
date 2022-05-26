@@ -10,8 +10,8 @@ Map::Map(int** board, mutex& boardMutex):boardMutex(boardMutex)
 {
     srand(time(NULL));
     stageTracker = StageTracker::getStageTracker();
-    rows = info::mapSize[stageTracker->getStage()][0];
-    cols = info::mapSize[stageTracker->getStage()][1];
+    rows = gameInfo::mapSize[stageTracker->getStage()][0];
+    cols = gameInfo::mapSize[stageTracker->getStage()][1];
     growthCount = -1;
     poisonCount = -1;
     gateCount = 0;
@@ -156,16 +156,16 @@ void Map::createGate()
         ableExitCountA = ableExitCountB = 0;
         for(int d = 0; d < 4; d++)
         {
-            rN = rA + info::direction[d][0];
-            cN = cA + info::direction[d][1];
+            rN = rA + gameInfo::direction[d][0];
+            cN = cA + gameInfo::direction[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountA++;
                 rExitA = rN;
                 cExitA = cN;
             }
-            rN = rB + info::direction[d][0];
-            cN = cB + info::direction[d][1];
+            rN = rB + gameInfo::direction[d][0];
+            cN = cB + gameInfo::direction[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountB++;
@@ -214,8 +214,8 @@ int Map::moveToOppositeGate(int** body, int d)
     for(int i = 0; i < 4; i++)
     {
         d = (d + i) % 4;
-        newR = r + info::direction[d][0];
-        newC = c + info::direction[d][1];
+        newR = r + gameInfo::direction[d][0];
+        newC = c + gameInfo::direction[d][1];
         if(0 <= newR && newR < rows && 0 <= newC && newC < cols)
         {
             if(board[newR][newC] != 1 && board[newR][newC] != 2 && board[newR][newC] != 7)
