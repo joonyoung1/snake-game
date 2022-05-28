@@ -1,4 +1,4 @@
-#include "StageTracker.h"
+#include "Singleton.h"
 #include "Constants.h"
 
 class Snake
@@ -8,7 +8,7 @@ private:
     int stage;
     int length;
 public:
-    Snake(int stage);
+    Snake();
     ~Snake();
     void move(int d);
     int getLength();

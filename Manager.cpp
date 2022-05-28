@@ -5,8 +5,9 @@
 #include "Manager.h"
 using namespace std;
 
-Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMutex), snake(stage), boardMutex(boardMutex)
+Manager::Manager(int** board):map(board), snake()
 {
+    int stage = Singleton::getSingleton()->getStage();
     rows = gameInfo::mapSize[stage][0];
     cols = gameInfo::mapSize[stage][1];
     goalLength = gameInfo::mission[stage][0];
@@ -19,11 +20,12 @@ Manager::Manager(int** board, int stage, mutex& boardMutex):map(board, boardMute
     playing = true;
 
     boardWin = newwin(rows, cols * 2, (35 - rows) / 2, 35 - cols);
-    missionWin = newwin(4, 35, (35 - rows) / 2, 38 + cols);
+    missionWin = newwin(5, 35, (35 - rows) / 2, 38 + cols);
 }
 
-bool Manager::startGame()
+int Manager::startGame()
 {
+    startTime = chrono::system_clock::now();
     int input;
     int** body = snake.getBody();
     map.setBlock(body[0][0], body[0][1], 3);
@@ -46,7 +48,8 @@ bool Manager::startGame()
     wrefresh(missionWin);
     delwin(boardWin);
     delwin(missionWin);
-    return gameClear;
+
+    return gameClear? chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count(): 0;
 }
 
 void Manager::moveSnake()
@@ -63,16 +66,11 @@ void Manager::moveSnake()
         body = snake.getBody();
         length = snake.getLength();
 
-        boardMutex.lock();
         map.setBlock(body[length][0], body[length][1], 0);
-        boardMutex.unlock();
-
         actByBlock();
 
-        boardMutex.lock();
         map.setBlock(body[0][0], body[0][1], 3);
         map.setBlock(body[1][0], body[1][1], 4);
-        boardMutex.unlock();
 
         if(usingGate)
         {
@@ -86,7 +84,7 @@ void Manager::moveSnake()
         }
         checkClear();
         printScreen();
-        this_thread::sleep_for(chrono::milliseconds(200) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
+        napms(200 - chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - start).count());
     }
 }
 
@@ -141,17 +139,14 @@ void Manager::printScreen()
     wclear(missionWin);
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
-        {
-            boardMutex.lock();
             mvwprintw(boardWin, r, c*2, gameInfo::printTable[map.getBlock(r, c)]);
-            boardMutex.unlock();
-        }
-    boardMutex.lock();
+
     mvwprintw(missionWin, 0, 0, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
     mvwprintw(missionWin, 1, 0, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map.getGrowthCount())).c_str());
     mvwprintw(missionWin, 2, 0, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map.getPoisonCount())).c_str());
     mvwprintw(missionWin, 3, 0, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map.getGateCount())).c_str());
-    boardMutex.unlock();
+    mvwprintw(missionWin, 4, 0, ("Playtime : " + to_string(chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count() / 1000)).c_str());
+
     wrefresh(boardWin);
     wrefresh(missionWin);
 }

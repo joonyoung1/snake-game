@@ -1,7 +1,8 @@
 #include "Snake.h"
 
-Snake::Snake(int stage)
+Snake::Snake()
 {
+    int stage = Singleton::getSingleton()->getStage();
     int r = gameInfo::spawn[stage][0];
     int c = gameInfo::spawn[stage][1];
     int d = gameInfo::spawn[stage][2];

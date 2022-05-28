@@ -6,22 +6,25 @@
 #include "Map.h"
 using namespace std;
 
-Map::Map(int** board, mutex& boardMutex):boardMutex(boardMutex)
+Map::Map(int** board)
 {
     srand(time(NULL));
-    stageTracker = StageTracker::getStageTracker();
-    rows = gameInfo::mapSize[stageTracker->getStage()][0];
-    cols = gameInfo::mapSize[stageTracker->getStage()][1];
+    singleton = Singleton::getSingleton();
+    boardMutex = singleton->getMutex();
+    rows = gameInfo::mapSize[singleton->getStage()][0];
+    cols = gameInfo::mapSize[singleton->getStage()][1];
     growthCount = -1;
     poisonCount = -1;
     gateCount = 0;
 
     this->board = board;
     wallCount = 0;
+    boardMutex->lock();
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
             if(board[r][c] == 1)
                 wallCount++;
+    boardMutex->unlock();
 
     createGrowth();
     createPoison();
@@ -31,12 +34,17 @@ Map::Map(int** board, mutex& boardMutex):boardMutex(boardMutex)
 
 int Map::getBlock(int r, int c)
 {
-    return this->board[r][c];
+    boardMutex->lock();
+    int block = this->board[r][c];
+    boardMutex->unlock();
+    return block;
 }
 
 void Map::setBlock(int r, int c, int value)
 {
+    boardMutex->lock();
     this->board[r][c] = value;
+    boardMutex->unlock();
 }
 
 void Map::createGrowth()
@@ -49,12 +57,13 @@ void Map::createGrowth()
 void Map::createGrowth_()
 {
     int r, c;
-    int numAtCreated = growthCount;
-    int stageAtCreated = stageTracker->getStage();
+    int num = growthCount;
+    int stage = singleton->getStage();
+    int gameID = singleton->getGameID();
     chrono::system_clock::time_point start = chrono::system_clock::now();
-    while(stageAtCreated == stageTracker->getStage() && numAtCreated == growthCount)
+    while(true)
     {
-        boardMutex.lock();
+        boardMutex->lock();
         do
         {
             r = rand() % rows;
@@ -62,12 +71,16 @@ void Map::createGrowth_()
         }
         while(board[r][c] != 0);
         board[r][c] = 5;
-        boardMutex.unlock();
-        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
-        boardMutex.lock();
+        boardMutex->unlock();
+
+        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
+        if(stage != singleton->getStage() || gameID != singleton->getGameID() || num != growthCount)
+            break;
+        
+        boardMutex->lock();
         if(board[r][c] == 5)
             board[r][c] = 0;
-        boardMutex.unlock();
+        boardMutex->unlock();
         start = chrono::system_clock::now();
     }
 }
@@ -82,12 +95,13 @@ void Map::createPoison()
 void Map::createPoison_()
 {
     int r, c;
-    int numAtCreated = poisonCount;
-    int stageAtCreated = stageTracker->getStage();
+    int num = poisonCount;
+    int stage = singleton->getStage();
+    int gameID = singleton->getGameID();
     chrono::system_clock::time_point start = chrono::system_clock::now();
-    while(stageAtCreated == stageTracker->getStage() && numAtCreated == poisonCount)
+    while(true)
     {
-        boardMutex.lock();
+        boardMutex->lock();
         do
         {
             r = rand() % rows;
@@ -95,26 +109,27 @@ void Map::createPoison_()
         }
         while(board[r][c] != 0);
         board[r][c] = 6;
-        boardMutex.unlock();
-        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(start - chrono::system_clock::now()));
-        boardMutex.lock();
+        boardMutex->unlock();
+
+        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
+        if(stage != singleton->getStage() || gameID != singleton->getGameID() || num != poisonCount)
+            break;
+        
+        boardMutex->lock();
         if(board[r][c] == 6)
             board[r][c] = 0;
-        boardMutex.unlock();
+        boardMutex->unlock();
         start = chrono::system_clock::now();
     }
 }
 
 void Map::createFirstGate()
 {
-    int stageAtCreated = stageTracker->getStage();
+    int stage = singleton->getStage();
+    int gameID = singleton->getGameID();
     this_thread::sleep_for(chrono::milliseconds(10000));
-    if(stageAtCreated == stageTracker->getStage())
-    {
-        boardMutex.lock();
+    if(stage == singleton->getStage() && gameID == singleton->getGameID())
         createGate();
-        boardMutex.unlock();
-    }
 }
 
 void Map::createGate()
@@ -177,8 +192,10 @@ void Map::createGate()
         if(ableExitCountA == 1 && ableExitCountB == 1 && rExitA == rExitB && cExitA == cExitB)
             continue;
 
+        boardMutex->lock();
         board[rA][cA] = 7;
         board[rB][cB] = 7;
+        boardMutex->unlock();
         break;
     }
 }
@@ -186,16 +203,19 @@ void Map::createGate()
 void Map::removeGate()
 {
     gateCount++;
+    boardMutex->lock();
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
             if(board[r][c] == 7)
                 board[r][c] = 1;
+    boardMutex->unlock();
 }
 
 int Map::moveToOppositeGate(int** body, int d)
 {
     int r, c;
     bool found = false;
+    boardMutex->lock();
     for(r = 0; r < rows; r++)
     {
         for(c = 0; c < cols; c++)
@@ -226,6 +246,7 @@ int Map::moveToOppositeGate(int** body, int d)
             }
         }
     }
+    boardMutex->unlock();
 }
 
 int Map::getGrowthCount()
