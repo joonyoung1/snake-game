@@ -2,6 +2,8 @@
 #include <mutex>
 #include <ncurses.h>
 #include <thread>
+#include <fstream>
+#include <string>
 #include "Manager.h"
 using namespace std;
 
@@ -12,6 +14,7 @@ int mainMenu();
 int surfMenu(int mode);
 void drawMenu(int mode);
 void rankMenu();
+void drawRank(int state, string (&name)[10], string (&record)[10]);
 void removeMenu();
 void removeCursor();
 void drawCursor(int mode, int state);
@@ -27,9 +30,11 @@ int main()
     ESCDELAY = 0;
     curs_set(0);
     noecho();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+
     clear();
     refresh();
-
     title();
     return 0;
 }
@@ -156,13 +161,11 @@ int surfMenu(int mode)
         else if(input == KEY_RIGHT && state < NUM - 1)
         {
             state++;
-            removeCursor();
             drawCursor(mode, state);
         }
         else if(input == KEY_LEFT && 0 < state)
         {
             state--;
-            removeCursor();
             drawCursor(mode, state);
         }
         refresh();
@@ -192,11 +195,60 @@ void drawMenu(int mode)
 
 void rankMenu()
 {
+    bkgd(2);
+    ifstream rankFile;
+    rankFile.open("rank.txt", ios::in);
+
+    string temp;
+    string name[5][10];
+    string record[5][10];
+    for(int i = 0; i < 5; i++)
+        for(int j = 0; j < 10; j++)
+        {
+            rankFile >> temp;
+            name[i][j] = temp.substr(5);
+            name[i][j].resize(design::MAX_NAME_LENGTH, ' ');
+            rankFile >> temp;
+            record[i][j] = temp.substr(7);
+        }
+
+    int state = STAGE_ALL;
+    drawRank(state, name[state], record[state]);
+    int input; 
+    while(true)
+    {
+        input = getch();
+        if(input == 10 || input == 27)
+            break;
+        else if(input == KEY_RIGHT && state < STAGE_4)
+        {
+            state++;
+            drawRank(state, name[state], record[state]);
+        }
+        else if(input == KEY_LEFT && 0 < state)
+        {
+            state--;
+            drawRank(state, name[state], record[state]);
+        }
+        refresh();
+    }
+    bkgd(1);
+}
+
+void drawRank(int state, string (&name)[10], string (&record)[10])
+{
     clear();
-    mvprintw(0, 0, "Will show rank here.");
     refresh();
-    napms(2000);
-    clear();
+    string rank;
+    for(int i = 0; i < 10; i++)
+    {
+        mvprintw(0, 10, design::RANK_TITLE[state]);
+        napms(20);
+        rank = to_string(i + 1);
+        if(i < 9) rank = "0" + rank;
+        mvprintw(i + 1, 10, ("#" + rank + " " + name[i] + " " + record[i] + "s").c_str());
+        refresh();
+    }
 }
 
 void removeMenu()
@@ -220,6 +272,7 @@ void removeCursor()
 
 void drawCursor(int mode, int state)
 {
+    removeCursor();
     const int NUM = mode == MODE_MAIN? design::MAIN_NUM: design::STAGE_NUM;
     const int* WIDTH = mode == MODE_MAIN? design::MAIN_WIDTH: design::STAGE_WIDTH;
     const int GAP = mode == MODE_MAIN? design::MAIN_GAP: design::STAGE_GAP;
@@ -238,8 +291,6 @@ void drawCursor(int mode, int state)
 
 void drawTitle()
 {   
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_WHITE, COLOR_BLACK);
     bkgd(COLOR_PAIR(1));
     
     int rPos = (gameInfo::screenHeight - design::titleHeight) / 3;

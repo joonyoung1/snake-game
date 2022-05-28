@@ -43,6 +43,10 @@ const int design::STAGE_WIDTH[6] = {6, 12, 12, 12, 12, 8};
 const int design::STAGE_GAP = 6;
 const int design::STAGE_WHITE = 9;
 
+const int design::MAX_NAME_LENGTH = 15;
+const char* design::RANK_TITLE[5] = \
+    {design::ALL, design::STAGE1, design::STAGE2, design::STAGE3, design::STAGE4};
+
 const int gameInfo::direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 const char* gameInfo::printTable[8] = \
     {design::SPACE, design::BLOCK, design::BLOCK, design::HEAD, design::BODY, design::GROWTH, design::POISON, design::GATE};

@@ -53,6 +53,9 @@ namespace design
     extern const int STAGE_WIDTH[6];
     extern const int STAGE_GAP;
     extern const int STAGE_WHITE;
+    
+    extern const int MAX_NAME_LENGTH;
+    extern const char* RANK_TITLE[5];
 }
 
 namespace gameInfo
