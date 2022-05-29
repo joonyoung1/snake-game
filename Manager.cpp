@@ -5,22 +5,25 @@
 #include "Manager.h"
 using namespace std;
 
+bool kbhit();
+
 Manager::Manager(int** board):map(board), snake()
 {
     int stage = Singleton::getSingleton()->getStage();
-    rows = gameInfo::mapSize[stage][0];
-    cols = gameInfo::mapSize[stage][1];
-    goalLength = gameInfo::mission[stage][0];
-    goalGrowth = gameInfo::mission[stage][1];
-    goalPoison = gameInfo::mission[stage][2];
-    goalGate = gameInfo::mission[stage][3];
+    rows = gameInfo::MAP_SIZE[stage][0];
+    cols = gameInfo::MAP_SIZE[stage][1];
+    goalLength = gameInfo::MISSION[stage][0];
+    goalGrowth = gameInfo::MISSION[stage][1];
+    goalPoison = gameInfo::MISSION[stage][2];
+    goalGate = gameInfo::MISSION[stage][3];
     maxLength = 3;
-    d = gameInfo::spawn[stage][2];
+    d = gameInfo::SPAWN[stage][2];
     gameClear = false;
     playing = true;
 
-    boardWin = newwin(rows, cols * 2, (35 - rows) / 2, 35 - cols);
-    missionWin = newwin(5, 35, (35 - rows) / 2, 38 + cols);
+    boardWin = newwin(rows, cols * 2, (design::SCREEN_HEIGHT - rows) / 2, design::SCREEN_HEIGHT - cols);
+    missionWin = newwin(design::MISSION_HEIGHT, design::MISSION_WIDTH, design::MISSION_ROW, design::MISSION_COL);
+    wborder(missionWin, '#', '#', '#', '#', '#', '#', '#', '#');
 }
 
 int Manager::startGame()
@@ -36,20 +39,35 @@ int Manager::startGame()
     int arrowToDirection[4] = {2, 0, 3, 1};
     while(playing)
     {
-        input = getch();
+        while(kbhit())
+            input = getch();
         if(KEY_DOWN <= input && input <= KEY_RIGHT)
             d = arrowToDirection[input - KEY_DOWN];
     }
-
+    int timeSpend = chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count();
     moveSnakeThread.join();
+
+    init_pair(3, COLOR_RED, COLOR_BLACK);
+    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
+    WINDOW* resultWin = newwin(1, 9, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
+    wbkgd(resultWin, COLOR_PAIR(3));
+    mvwprintw(resultWin, 0, 0, "GAME OVER");
+    wrefresh(resultWin);
+    attroff(A_BLINK | A_BOLD | COLOR_PAIR(2));
+
+    flushinp();
+    getch();
     wclear(boardWin);
     wclear(missionWin);
+    wclear(resultWin);
     wrefresh(boardWin);
     wrefresh(missionWin);
+    wrefresh(resultWin);
     delwin(boardWin);
     delwin(missionWin);
+    delwin(resultWin);
 
-    return gameClear? chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count(): 0;
+    return clear? timeSpend: 0;
 }
 
 void Manager::moveSnake()
@@ -139,14 +157,35 @@ void Manager::printScreen()
     wclear(missionWin);
     for(int r = 0; r < rows; r++)
         for(int c = 0; c < cols; c++)
-            mvwprintw(boardWin, r, c*2, gameInfo::printTable[map.getBlock(r, c)]);
-
-    mvwprintw(missionWin, 0, 0, ("Goal Length : " + to_string(goalLength) + ", Max Length : " + to_string(maxLength)).c_str());
-    mvwprintw(missionWin, 1, 0, ("Goal Growth : " + to_string(goalGrowth) + ", Current Growth : " + to_string(map.getGrowthCount())).c_str());
-    mvwprintw(missionWin, 2, 0, ("Goal Poison : " + to_string(goalPoison) + ", Current Poison : " + to_string(map.getPoisonCount())).c_str());
-    mvwprintw(missionWin, 3, 0, ("Goal Gate : " + to_string(goalGate) + ", Current Gate : " + to_string(map.getGateCount())).c_str());
-    mvwprintw(missionWin, 4, 0, ("Playtime : " + to_string(chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count() / 1000)).c_str());
+            mvwprintw(boardWin, r, c*2, gameInfo::PRINT_TABLE[map.getBlock(r, c)]);
+    
+    mvwprintw(missionWin, 0, 0, ((string)design::RULER + " : " + (maxLength < 10? "0": "") + to_string(maxLength) + " / " + (goalLength < 10? "0": "") + to_string(goalLength)).c_str());
+    mvwprintw(missionWin, 1, 0, ((string)design::GROWTH + " : " + (map.getGrowthCount() < 10? "0": "") + to_string(map.getGrowthCount()) + " / " + (goalGrowth < 10? "0": "") + to_string(goalGrowth)).c_str());
+    mvwprintw(missionWin, 2, 0, ((string)design::POISON + "  : " + (map.getPoisonCount() < 10? "0": "") + to_string(map.getPoisonCount()) + " / " + (goalPoison < 10? "0": "") + to_string(goalPoison)).c_str());
+    mvwprintw(missionWin, 3, 0, ((string)design::GATE + " : " + (map.getGateCount() < 10? "0": "") + to_string(map.getGateCount()) + " / " + (goalGate < 10? "0": "") + to_string(goalGate)).c_str());
+    string seconds = to_string(chrono::duration_cast<std::chrono::seconds>(chrono::system_clock::now() - startTime).count());
+    seconds = seconds.insert(0, "     ", 6 - seconds.length());
+    mvwprintw(missionWin, 4, 0, ((string)design::CLOCK + " : " + seconds + "s").c_str());
 
     wrefresh(boardWin);
     wrefresh(missionWin);
+}
+
+bool kbhit()
+{
+    int input;
+    bool pressed;
+
+    nodelay(stdscr, true);
+    input = getch();
+    if(input == ERR)
+        pressed = false;
+    else
+    {
+        pressed = true;
+        ungetch(input);
+    }
+    nodelay(stdscr, false);
+    return pressed;
+    return true;
 }

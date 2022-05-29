@@ -18,10 +18,16 @@
 
 namespace design
 {
-    extern const int title[5][30];
-    extern const int titleHeight;
-    extern const int titleWidth;
+    extern const int SCREEN_HEIGHT;
+    extern const int SCREEN_WIDTH;
+    extern const int TITLE[5][30];
+    extern const int TITLE_HEIGHT;
+    extern const int TITLE_WIDTH;
     extern const int MENU_ROW;
+    extern const int MISSION_ROW;
+    extern const int MISSION_COL;
+    extern const int MISSION_HEIGHT;
+    extern const int MISSION_WIDTH;
 
     extern const char* SPACE;
     extern const char* BLOCK;
@@ -30,8 +36,12 @@ namespace design
     extern const char* GROWTH;
     extern const char* POISON;
     extern const char* GATE;
+    extern const char* RULER;
+    extern const char* CLOCK;
     extern const char* UPPER_LEFT;
     extern const char* LOWER_RIGHT;
+    extern const char* ARROW_LEFT;
+    extern const char* ARROW_RIGHT;
 
     extern const char* PLAY;
     extern const char* RANK;
@@ -55,17 +65,20 @@ namespace design
     extern const int STAGE_WHITE;
     
     extern const int MAX_NAME_LENGTH;
+    extern const int MAX_RECORD_LENGTH;
     extern const char* RANK_TITLE[5];
+    extern const int ARROW_ROW;
+    extern const int ARROW_WHITE;
+    extern const int RANK_ROW;
+    extern const int RANK_WIDTH;
 }
 
 namespace gameInfo
 {
-    extern const int direction[4][2];
-    extern const char* printTable[8];
-    extern const int spawn[4][3];
-    extern const int mission[4][4];
-    extern const int mapSize[4][2];
-    extern const int map[4][35][35];
-    extern const int screenHeight;
-    extern const int screenWidth;
+    extern const int DIRECTION[4][2];
+    extern const char* PRINT_TABLE[8];
+    extern const int SPAWN[4][3];
+    extern const int MISSION[4][4];
+    extern const int MAP_SIZE[4][2];
+    extern const int MAP[4][35][35];
 }

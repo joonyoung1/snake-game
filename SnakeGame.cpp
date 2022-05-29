@@ -22,7 +22,7 @@ void drawTitle();
 
 int main()
 {
-    system(("resize -s " + to_string(gameInfo::screenHeight) + " " + to_string(gameInfo::screenWidth)).c_str());
+    system(("resize -s " + to_string(design::SCREEN_HEIGHT) + " " + to_string(design::SCREEN_WIDTH)).c_str());
     setlocale(LC_ALL, "");
     initscr();
     start_color();
@@ -88,18 +88,18 @@ int playGame(int stage)
     Singleton* singleton = Singleton::getSingleton();
     singleton->setStage(stage);
 
-    int **board = new int *[gameInfo::mapSize[stage][0]];
-    for(int r = 0; r < gameInfo::mapSize[stage][0]; r++)
+    int **board = new int *[gameInfo::MAP_SIZE[stage][0]];
+    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
     {
-        board[r] = new int[gameInfo::mapSize[stage][1]];
-        for(int c = 0; c < gameInfo::mapSize[stage][1]; c++)
-            board[r][c] = gameInfo::map[stage][r][c];
+        board[r] = new int[gameInfo::MAP_SIZE[stage][1]];
+        for(int c = 0; c < gameInfo::MAP_SIZE[stage][1]; c++)
+            board[r][c] = gameInfo::MAP[stage][r][c];
     }
     Manager manager = Manager(board);
     result = manager.startGame();
     singleton->nextGameID();
 
-    for(int r = 0; r < gameInfo::mapSize[stage][0]; r++)
+    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
         delete[] board[r];
     delete[] board;
 
@@ -238,17 +238,18 @@ void rankMenu()
 void drawRank(int state, string (&name)[10], string (&record)[10])
 {
     clear();
-    refresh();
+    if(state != STAGE_ALL) mvprintw(design::ARROW_ROW, design::ARROW_WHITE, design::ARROW_LEFT);
+    if(state != STAGE_4) mvprintw(design::ARROW_ROW, design::SCREEN_WIDTH - design::ARROW_WHITE - 2, design::ARROW_RIGHT);
+    mvprintw(design::RANK_ROW, (design::SCREEN_WIDTH - (state == 0? 6: 12)) / 2, design::RANK_TITLE[state]);
+
     string rank;
     for(int i = 0; i < 10; i++)
     {
-        mvprintw(0, 10, design::RANK_TITLE[state]);
-        napms(20);
         rank = to_string(i + 1);
         if(i < 9) rank = "0" + rank;
-        mvprintw(i + 1, 10, ("#" + rank + " " + name[i] + " " + record[i] + "s").c_str());
-        refresh();
+        mvprintw(design::RANK_ROW + i * 2 + 3, (design::SCREEN_WIDTH - design::RANK_WIDTH) / 2, ("# " + rank + " " + name[i] + " " + record[i] + "s").c_str());
     }
+    refresh();
 }
 
 void removeMenu()
@@ -293,14 +294,14 @@ void drawTitle()
 {   
     bkgd(COLOR_PAIR(1));
     
-    int rPos = (gameInfo::screenHeight - design::titleHeight) / 3;
-    int cPos = (gameInfo::screenWidth - design::titleWidth * 2) / 2 + 1;
-    for(int c = 0; c < design::titleWidth; c++)
+    int rPos = (design::SCREEN_HEIGHT - design::TITLE_HEIGHT) / 3;
+    int cPos = (design::SCREEN_WIDTH - design::TITLE_WIDTH * 2) / 2 + 1;
+    for(int c = 0; c < design::TITLE_WIDTH; c++)
     {
-        for(int r = 0; r < design::titleHeight; r++)
+        for(int r = 0; r < design::TITLE_HEIGHT; r++)
         {
-            mvprintw(rPos + r, cPos + c * 2, gameInfo::printTable[design::title[r][c]]);
-            printw(gameInfo::printTable[0]);
+            mvprintw(rPos + r, cPos + c * 2, gameInfo::PRINT_TABLE[design::TITLE[r][c]]);
+            printw(gameInfo::PRINT_TABLE[0]);
         }
         refresh();
         napms(35);
@@ -309,13 +310,13 @@ void drawTitle()
 
     WINDOW* decoWin = newwin(11, 0, 8, 0);
     wbkgd(decoWin, COLOR_PAIR(2));
-    for(int c = 2; c <= gameInfo::screenWidth; c += 2)
+    for(int c = 2; c <= design::SCREEN_WIDTH; c += 2)
     {
         wresize(decoWin, 11, c);        
-        if(c - 2 >= cPos && c < cPos + design::titleWidth * 2)
+        if(c - 2 >= cPos && c < cPos + design::TITLE_WIDTH * 2)
         {
-            for(int r = 0; r < design::titleHeight; r++)
-                mvwprintw(decoWin, r + 2, c - 2, gameInfo::printTable[design::title[r][(c - cPos) / 2 - 1]]);
+            for(int r = 0; r < design::TITLE_HEIGHT; r++)
+                mvwprintw(decoWin, r + 2, c - 2, gameInfo::PRINT_TABLE[design::TITLE[r][(c - cPos) / 2 - 1]]);
         }
         wrefresh(decoWin);
         napms(10);

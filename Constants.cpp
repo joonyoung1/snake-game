@@ -1,14 +1,20 @@
 #include "Constants.h"
 
-const int design::title[5][30] = \
+const int design::SCREEN_HEIGHT = 35;
+const int design::SCREEN_WIDTH = 110;
+const int design::TITLE[5][30] = \
     {{1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0},
     {1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
     {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
     {1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0}};
-const int design::titleHeight = 5;
-const int design::titleWidth = 30;
+const int design::TITLE_HEIGHT = 5;
+const int design::TITLE_WIDTH = 30;
 const int design::MENU_ROW = 26;
+const int design::MISSION_ROW = 5;
+const int design::MISSION_COL = 90;
+const int design::MISSION_HEIGHT = 5;
+const int design::MISSION_WIDTH = 12;
 
 const char* design::SPACE = "\u2800";
 const char* design::BLOCK = "\u25A0";
@@ -17,8 +23,12 @@ const char* design::BODY = "\u29BF";
 const char* design::GROWTH = "\U0001F34E";
 const char* design::POISON = "\u2620";
 const char* design::GATE = "\U0001F6AA";
+const char* design::RULER = "\U0001F4CF";
+const char* design::CLOCK = "\u23F0";
 const char* design::UPPER_LEFT = "\u25E4";
 const char* design::LOWER_RIGHT = "\u25E2";
+const char* design::ARROW_LEFT = "\u2B9C";
+const char* design::ARROW_RIGHT = "\u2B9E";
 
 const char* design::PLAY = "\uFF30\uFF2c\uFF21\uFF39";
 const char* design::RANK = "\uFF32\uFF21\uFF2e\uFF2b";
@@ -44,28 +54,33 @@ const int design::STAGE_GAP = 6;
 const int design::STAGE_WHITE = 9;
 
 const int design::MAX_NAME_LENGTH = 15;
+const int design::MAX_RECORD_LENGTH = 9;
 const char* design::RANK_TITLE[5] = \
     {design::ALL, design::STAGE1, design::STAGE2, design::STAGE3, design::STAGE4};
+const int design::ARROW_ROW = 20;
+const int design::ARROW_WHITE = 28;
+const int design::RANK_ROW = 6;
+const int design::RANK_WIDTH = design::MAX_NAME_LENGTH + design::MAX_RECORD_LENGTH + 5;
 
-const int gameInfo::direction[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-const char* gameInfo::printTable[8] = \
+const int gameInfo::DIRECTION[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+const char* gameInfo::PRINT_TABLE[8] = \
     {design::SPACE, design::BLOCK, design::BLOCK, design::HEAD, design::BODY, design::GROWTH, design::POISON, design::GATE};
-const int gameInfo::spawn[4][3] = \
+const int gameInfo::SPAWN[4][3] = \
     {{10, 10, 1},
     {13, 7, 0},
     {14, 11, 1},
     {17, 14, 1}};
-const int gameInfo::mission[4][4] = \
+const int gameInfo::MISSION[4][4] = \
     {{3, 2, 0, 0},
     {3, 2, 0, 0},
     {3, 2, 0, 0},
     {3, 2, 0, 0}};
-const int gameInfo::mapSize[4][2] = \
+const int gameInfo::MAP_SIZE[4][2] = \
     {{21, 21},
     {25, 25},
     {30, 30},
     {35, 35}};
-const int gameInfo::map[4][35][35] = \
+const int gameInfo::MAP[4][35][35] = \
     {{{2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -177,5 +192,4 @@ const int gameInfo::map[4][35][35] = \
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2}}};
-const int gameInfo::screenHeight = 35;
-const int gameInfo::screenWidth = 110;
+

@@ -11,8 +11,8 @@ Map::Map(int** board)
     srand(time(NULL));
     singleton = Singleton::getSingleton();
     boardMutex = singleton->getMutex();
-    rows = gameInfo::mapSize[singleton->getStage()][0];
-    cols = gameInfo::mapSize[singleton->getStage()][1];
+    rows = gameInfo::MAP_SIZE[singleton->getStage()][0];
+    cols = gameInfo::MAP_SIZE[singleton->getStage()][1];
     growthCount = -1;
     poisonCount = -1;
     gateCount = 0;
@@ -171,16 +171,16 @@ void Map::createGate()
         ableExitCountA = ableExitCountB = 0;
         for(int d = 0; d < 4; d++)
         {
-            rN = rA + gameInfo::direction[d][0];
-            cN = cA + gameInfo::direction[d][1];
+            rN = rA + gameInfo::DIRECTION[d][0];
+            cN = cA + gameInfo::DIRECTION[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountA++;
                 rExitA = rN;
                 cExitA = cN;
             }
-            rN = rB + gameInfo::direction[d][0];
-            cN = cB + gameInfo::direction[d][1];
+            rN = rB + gameInfo::DIRECTION[d][0];
+            cN = cB + gameInfo::DIRECTION[d][1];
             if(0 <= rN && rN < rows && 0<= cN && cN <= cols && board[rN][cN] != 1 && board[rN][cN] != 2)
             {
                 ableExitCountB++;
@@ -234,19 +234,19 @@ int Map::moveToOppositeGate(int** body, int d)
     for(int i = 0; i < 4; i++)
     {
         d = (d + i) % 4;
-        newR = r + gameInfo::direction[d][0];
-        newC = c + gameInfo::direction[d][1];
+        newR = r + gameInfo::DIRECTION[d][0];
+        newC = c + gameInfo::DIRECTION[d][1];
         if(0 <= newR && newR < rows && 0 <= newC && newC < cols)
         {
             if(board[newR][newC] != 1 && board[newR][newC] != 2 && board[newR][newC] != 7)
             {
                 body[0][0] = newR;
                 body[0][1] = newC;
+                boardMutex->unlock();
                 return d;
             }
         }
     }
-    boardMutex->unlock();
 }
 
 int Map::getGrowthCount()

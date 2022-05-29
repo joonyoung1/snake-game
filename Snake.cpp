@@ -3,9 +3,9 @@
 Snake::Snake()
 {
     int stage = Singleton::getSingleton()->getStage();
-    int r = gameInfo::spawn[stage][0];
-    int c = gameInfo::spawn[stage][1];
-    int d = gameInfo::spawn[stage][2];
+    int r = gameInfo::SPAWN[stage][0];
+    int c = gameInfo::SPAWN[stage][1];
+    int d = gameInfo::SPAWN[stage][2];
     length = 3;
     d = (d + 2) % 4;
 
@@ -17,8 +17,8 @@ Snake::Snake()
     {
         body[i][0] = r;
         body[i][1] = c;
-        r += gameInfo::direction[d][0];
-        c += gameInfo::direction[d][1];
+        r += gameInfo::DIRECTION[d][0];
+        c += gameInfo::DIRECTION[d][1];
     }
 }
 
@@ -37,8 +37,8 @@ void Snake::move(int d)
         body[i][1] = body[i - 1][1];
     }
 
-    body[0][0] = body[1][0] + gameInfo::direction[d][0];
-    body[0][1] = body[1][1] + gameInfo::direction[d][1];
+    body[0][0] = body[1][0] + gameInfo::DIRECTION[d][0];
+    body[0][1] = body[1][1] + gameInfo::DIRECTION[d][1];
 }
 
 int Snake::getLength()
