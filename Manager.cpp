@@ -23,7 +23,7 @@ Manager::Manager(int** board):map(board), snake()
 
     boardWin = newwin(rows, cols * 2, (design::SCREEN_HEIGHT - rows) / 2, design::SCREEN_HEIGHT - cols);
     missionWin = newwin(design::MISSION_HEIGHT, design::MISSION_WIDTH, design::MISSION_ROW, design::MISSION_COL);
-    wborder(missionWin, '#', '#', '#', '#', '#', '#', '#', '#');
+    wborder(missionWin, '.', '.', '.', '.', '.', '.', '.', '.');
 }
 
 int Manager::startGame()
@@ -51,25 +51,13 @@ int Manager::startGame()
     int timeSpend = chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count();
     moveSnakeThread.join();
 
-    init_pair(3, COLOR_RED, COLOR_BLACK);
-    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
-    WINDOW* resultWin = newwin(1, 9, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
-    wbkgd(resultWin, COLOR_PAIR(3));
-    mvwprintw(resultWin, 0, 0, "GAME OVER");
-    wrefresh(resultWin);
-    attroff(A_BLINK | A_BOLD | COLOR_PAIR(2));
-
-    flushinp();
-    getch();
+    showResult();
     wclear(boardWin);
     wclear(missionWin);
-    wclear(resultWin);
     wrefresh(boardWin);
     wrefresh(missionWin);
-    wrefresh(resultWin);
     delwin(boardWin);
     delwin(missionWin);
-    delwin(resultWin);
 
     return gameClear? timeSpend: 0;
 }
@@ -173,6 +161,43 @@ void Manager::printScreen()
 
     wrefresh(boardWin);
     wrefresh(missionWin);
+}
+
+void Manager::showResult()
+{
+    WINDOW* resultWin = newwin(2, 10, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
+    wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
+    wattrset(resultWin, A_BLINK | A_BOLD);
+    wclear(resultWin);
+    mvwprintw(resultWin, 0, 0, gameClear? design::STAGE: design::GAME);
+    mvwprintw(resultWin, 1, 0, gameClear? design::CLEAR: design::OVER);
+    wrefresh(resultWin);
+    napms(3000);
+    
+    wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
+    wattrset(resultWin, A_BOLD);
+    wclear(resultWin);
+    mvwprintw(resultWin, 0, 0, gameClear? design::STAGE: design::GAME);
+    mvwprintw(resultWin, 1, 0, gameClear? design::CLEAR: design::OVER);
+    wrefresh(resultWin);
+    wattrset(resultWin, BLACK_WHITE_PAIR);
+
+    WINDOW* nextWin = newwin(2, 15, design::MISSION_ROW + design::MISSION_HEIGHT + 4, design::MISSION_COL);
+    wattrset(resultWin, A_BOLD);
+    wbkgd(nextWin, BLACK_WHITE_PAIR);
+    wclear(nextWin);
+    mvwprintw(nextWin, 0, 0, "Press Any Key");
+    mvwprintw(nextWin, 1, 0, "to Continue...");
+    wrefresh(nextWin);
+
+    flushinp();
+    getch();
+    wclear(resultWin);
+    wclear(nextWin);
+    wrefresh(resultWin);
+    wrefresh(nextWin);
+    delwin(resultWin);
+    delwin(nextWin);
 }
 
 bool kbhit()

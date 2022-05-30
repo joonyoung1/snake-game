@@ -11,10 +11,6 @@ const int design::TITLE[5][30] = \
 const int design::TITLE_HEIGHT = 5;
 const int design::TITLE_WIDTH = 30;
 const int design::MENU_ROW = 26;
-const int design::MISSION_ROW = 5;
-const int design::MISSION_COL = 90;
-const int design::MISSION_HEIGHT = 5;
-const int design::MISSION_WIDTH = 12;
 
 const char* design::SPACE = "\u2800";
 const char* design::BLOCK = "\u25A0";
@@ -61,6 +57,15 @@ const int design::ARROW_ROW = 20;
 const int design::ARROW_WHITE = 28;
 const int design::RANK_ROW = 6;
 const int design::RANK_WIDTH = design::MAX_NAME_LENGTH + design::MAX_RECORD_LENGTH + 5;
+
+const int design::MISSION_ROW = 5;
+const int design::MISSION_COL = 90;
+const int design::MISSION_HEIGHT = 5;
+const int design::MISSION_WIDTH = 12;
+const char* design::STAGE = "\uFF33\uFF34\uFF21\uFF27\uFF25";
+const char* design::CLEAR = "\uFF23\uFF2C\uFF25\uFF21\uFF32";
+const char* design::GAME = "\uFF27\uFF21\uFF2D\uFF25";
+const char* design::OVER = "\uFF2F\uFF36\uFF25\uFF32";
 
 const int gameInfo::DIRECTION[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 const char* gameInfo::PRINT_TABLE[8] = \

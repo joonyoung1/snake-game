@@ -19,6 +19,7 @@ private:
     void actByBlock();
     void checkClear();
     void printScreen();
+    void showResult();
 public:
     Manager(int** board);
     int startGame();

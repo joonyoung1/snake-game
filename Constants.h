@@ -16,6 +16,11 @@
 #define STAGE_4 4
 #define STAGE_BACK 5
 
+#define BLACK_WHITE_PAIR COLOR_PAIR(1)
+#define WHITE_BLACK_PAIR COLOR_PAIR(2)
+#define GREEN_WHITE_PAIR COLOR_PAIR(3)
+#define RED_WHITE_PAIR COLOR_PAIR(4)
+
 namespace design
 {
     extern const int SCREEN_HEIGHT;
@@ -24,10 +29,6 @@ namespace design
     extern const int TITLE_HEIGHT;
     extern const int TITLE_WIDTH;
     extern const int MENU_ROW;
-    extern const int MISSION_ROW;
-    extern const int MISSION_COL;
-    extern const int MISSION_HEIGHT;
-    extern const int MISSION_WIDTH;
 
     extern const char* SPACE;
     extern const char* BLOCK;
@@ -71,6 +72,15 @@ namespace design
     extern const int ARROW_WHITE;
     extern const int RANK_ROW;
     extern const int RANK_WIDTH;
+
+    extern const int MISSION_ROW;
+    extern const int MISSION_COL;
+    extern const int MISSION_HEIGHT;
+    extern const int MISSION_WIDTH;
+    extern const char* STAGE;
+    extern const char* CLEAR;
+    extern const char* GAME;
+    extern const char* OVER;
 }
 
 namespace gameInfo

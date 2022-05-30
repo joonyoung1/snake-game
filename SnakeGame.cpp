@@ -32,6 +32,8 @@ int main()
     noecho();
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
     init_pair(2, COLOR_WHITE, COLOR_BLACK);
+    init_pair(3, COLOR_GREEN, COLOR_WHITE);
+    init_pair(4, COLOR_RED, COLOR_WHITE);
 
     clear();
     refresh();
@@ -195,7 +197,7 @@ void drawMenu(int mode)
 
 void rankMenu()
 {
-    bkgd(2);
+    bkgd(WHITE_BLACK_PAIR);
     ifstream rankFile;
     rankFile.open("rank.txt", ios::in);
 
@@ -232,7 +234,7 @@ void rankMenu()
         }
         refresh();
     }
-    bkgd(1);
+    bkgd(BLACK_WHITE_PAIR);
 }
 
 void drawRank(int state, string (&name)[10], string (&record)[10])
@@ -292,7 +294,7 @@ void drawCursor(int mode, int state)
 
 void drawTitle()
 {   
-    bkgd(COLOR_PAIR(1));
+    bkgd(BLACK_WHITE_PAIR);
     
     int rPos = (design::SCREEN_HEIGHT - design::TITLE_HEIGHT) / 3;
     int cPos = (design::SCREEN_WIDTH - design::TITLE_WIDTH * 2) / 2 + 1;
@@ -309,7 +311,7 @@ void drawTitle()
     refresh();
 
     WINDOW* decoWin = newwin(11, 0, 8, 0);
-    wbkgd(decoWin, COLOR_PAIR(2));
+    wbkgd(decoWin, WHITE_BLACK_PAIR);
     for(int c = 2; c <= design::SCREEN_WIDTH; c += 2)
     {
         wresize(decoWin, 11, c);        
