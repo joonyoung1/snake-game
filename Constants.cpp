@@ -50,13 +50,12 @@ const int design::STAGE_GAP = 6;
 const int design::STAGE_WHITE = 9;
 
 const int design::MAX_NAME_LENGTH = 15;
-const int design::MAX_RECORD_LENGTH = 9;
 const char* design::RANK_TITLE[5] = \
     {design::ALL, design::STAGE1, design::STAGE2, design::STAGE3, design::STAGE4};
 const int design::ARROW_ROW = 20;
 const int design::ARROW_WHITE = 28;
 const int design::RANK_ROW = 6;
-const int design::RANK_WIDTH = design::MAX_NAME_LENGTH + design::MAX_RECORD_LENGTH + 5;
+const int design::RANK_WIDTH = design::MAX_NAME_LENGTH + 14;
 
 const int design::MISSION_ROW = 5;
 const int design::MISSION_COL = 90;
@@ -66,6 +65,9 @@ const char* design::STAGE = "\uFF33\uFF34\uFF21\uFF27\uFF25";
 const char* design::CLEAR = "\uFF23\uFF2C\uFF25\uFF21\uFF32";
 const char* design::GAME = "\uFF27\uFF21\uFF2D\uFF25";
 const char* design::OVER = "\uFF2F\uFF36\uFF25\uFF32";
+
+const int design::REGISTER_WIDTH = 35;
+const int design::REGISTER_HEIGHT = 9;
 
 const int gameInfo::DIRECTION[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 const char* gameInfo::PRINT_TABLE[8] = \

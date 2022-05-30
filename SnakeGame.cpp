@@ -1,6 +1,6 @@
 #include <iostream>
 #include <mutex>
-#include <ncurses.h>
+#include <curses.h>
 #include <thread>
 #include <fstream>
 #include <string>
@@ -9,7 +9,7 @@ using namespace std;
 
 void title();
 int playGame(int stage);
-void recordRank(int record);
+void recordRank(int state, int timeSpend);
 int mainMenu();
 int surfMenu(int mode);
 void drawMenu(int mode);
@@ -32,8 +32,8 @@ int main()
     noecho();
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
     init_pair(2, COLOR_WHITE, COLOR_BLACK);
-    init_pair(3, COLOR_GREEN, COLOR_WHITE);
-    init_pair(4, COLOR_RED, COLOR_WHITE);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
 
     clear();
     refresh();
@@ -58,12 +58,12 @@ void title()
             for(int i = 0; i < 4; i++)
             {
                 result = playGame(i);
-                timeSum += result;
                 if(!result)
                 {
                     cleared = false;
                     break;
                 }
+                timeSum += result;
             }
         }
         else if(STAGE_1 <= state && state <= STAGE_4)
@@ -76,7 +76,7 @@ void title()
             break;
 
         if(cleared)
-            recordRank(timeSum);
+            recordRank(state, timeSum);
     }
 
     curs_set(1);
@@ -105,16 +105,78 @@ int playGame(int stage)
         delete[] board[r];
     delete[] board;
 
-    clear();
-    refresh();
     return result;
 }
 
-void recordRank(int record)
+void recordRank(int state, int timeSpend)
 {
-    mvprintw(0, 0, ("Will record the (playtime : " + to_string(record) + "ms) here").c_str());
-    refresh();
-    napms(2000);
+    ifstream rankFile;
+    rankFile.open("rank.txt", ios::in);
+
+    string temp;
+    string name[5][10];
+    string record[5][10];
+    for(int i = 0; i < 5; i++)
+        for(int j = 0; j < 10; j++)
+        {
+            rankFile >> temp;
+            name[i][j] = temp.substr(5);
+            name[i][j].resize(design::MAX_NAME_LENGTH, ' ');
+            rankFile >> temp;
+            record[i][j] = temp.substr(7);
+        }
+
+    int rank;
+    for(int i = 0; i < 10; i++)
+        if(timeSpend / 1000.0 <= stod(record[state][i]))
+        {
+            rank = i + 1;
+            break;
+        }
+    string myRecord = to_string(timeSpend);
+    if(myRecord.length() < 4)
+        myRecord = myRecord.insert(0, 4 - myRecord.length(), '0');
+    myRecord = myRecord.insert(myRecord.length() - 3, ".");
+    
+    WINDOW* registeringWin = newwin(design::REGISTER_HEIGHT, design::REGISTER_WIDTH, \
+        (design::SCREEN_HEIGHT - design::REGISTER_HEIGHT) / 2 - 5, (design::SCREEN_WIDTH - design::REGISTER_WIDTH) / 2);
+
+    wborder(registeringWin, '*', '*', '*', '*', '*', '*', '*', '*');
+    mvwprintw(registeringWin, 1, 1, ("YOUR RECORD IS " + myRecord + " s").c_str());
+    mvwprintw(registeringWin, 2, 1, ("WILL BE RANKED AT # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
+    mvwprintw(registeringWin, 3, 1, "TYPE YOUR NAME AND PRESS ENTER");
+
+    int input;
+    string userName = "";
+    curs_set(1);
+    wmove(registeringWin, 4, 1);
+    wrefresh(registeringWin);
+
+    while(true)
+    {
+        input = getch();
+        if(input == 10)
+            break;
+        if(input == KEY_BACKSPACE)
+        {
+            if(0 < userName.length())
+            {
+                userName.pop_back();
+                int y, x;
+                getyx(registeringWin, y, x);
+                wmove(registeringWin, y, x - 1);
+                waddch(registeringWin, ' ');
+                wmove(registeringWin, y, x - 1);
+            }
+        }
+        else if(userName.length() <= design::MAX_NAME_LENGTH)
+        {
+            userName.push_back(input);
+            waddch(registeringWin, input);
+        }
+        wrefresh(registeringWin);
+    }
+    curs_set(0);
     clear();
     refresh();
 }

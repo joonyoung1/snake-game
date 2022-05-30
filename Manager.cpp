@@ -23,7 +23,6 @@ Manager::Manager(int** board):map(board), snake()
 
     boardWin = newwin(rows, cols * 2, (design::SCREEN_HEIGHT - rows) / 2, design::SCREEN_HEIGHT - cols);
     missionWin = newwin(design::MISSION_HEIGHT, design::MISSION_WIDTH, design::MISSION_ROW, design::MISSION_COL);
-    wborder(missionWin, '.', '.', '.', '.', '.', '.', '.', '.');
 }
 
 int Manager::startGame()
@@ -52,10 +51,6 @@ int Manager::startGame()
     moveSnakeThread.join();
 
     showResult();
-    wclear(boardWin);
-    wclear(missionWin);
-    wrefresh(boardWin);
-    wrefresh(missionWin);
     delwin(boardWin);
     delwin(missionWin);
 
@@ -165,22 +160,14 @@ void Manager::printScreen()
 
 void Manager::showResult()
 {
-    WINDOW* resultWin = newwin(2, 10, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
+    WINDOW* resultWin = newwin(2, gameClear? 10: 8, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
     wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
     wattrset(resultWin, A_BLINK | A_BOLD);
     wclear(resultWin);
     mvwprintw(resultWin, 0, 0, gameClear? design::STAGE: design::GAME);
     mvwprintw(resultWin, 1, 0, gameClear? design::CLEAR: design::OVER);
     wrefresh(resultWin);
-    napms(3000);
-    
-    wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
-    wattrset(resultWin, A_BOLD);
-    wclear(resultWin);
-    mvwprintw(resultWin, 0, 0, gameClear? design::STAGE: design::GAME);
-    mvwprintw(resultWin, 1, 0, gameClear? design::CLEAR: design::OVER);
-    wrefresh(resultWin);
-    wattrset(resultWin, BLACK_WHITE_PAIR);
+    napms(2500);
 
     WINDOW* nextWin = newwin(2, 15, design::MISSION_ROW + design::MISSION_HEIGHT + 4, design::MISSION_COL);
     wattrset(resultWin, A_BOLD);
@@ -192,10 +179,6 @@ void Manager::showResult()
 
     flushinp();
     getch();
-    wclear(resultWin);
-    wclear(nextWin);
-    wrefresh(resultWin);
-    wrefresh(nextWin);
     delwin(resultWin);
     delwin(nextWin);
 }

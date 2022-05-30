@@ -66,7 +66,6 @@ namespace design
     extern const int STAGE_WHITE;
     
     extern const int MAX_NAME_LENGTH;
-    extern const int MAX_RECORD_LENGTH;
     extern const char* RANK_TITLE[5];
     extern const int ARROW_ROW;
     extern const int ARROW_WHITE;
@@ -81,6 +80,10 @@ namespace design
     extern const char* CLEAR;
     extern const char* GAME;
     extern const char* OVER;
+
+    extern const int REGISTER_WIDTH;
+    extern const int REGISTER_HEIGHT;
+
 }
 
 namespace gameInfo
