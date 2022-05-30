@@ -42,7 +42,11 @@ int Manager::startGame()
         while(kbhit())
             input = getch();
         if(KEY_DOWN <= input && input <= KEY_RIGHT)
+        {
             d = arrowToDirection[input - KEY_DOWN];
+            input = 0;
+        }
+        napms(1);
     }
     int timeSpend = chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count();
     moveSnakeThread.join();
@@ -67,7 +71,7 @@ int Manager::startGame()
     delwin(missionWin);
     delwin(resultWin);
 
-    return clear? timeSpend: 0;
+    return gameClear? timeSpend: 0;
 }
 
 void Manager::moveSnake()
