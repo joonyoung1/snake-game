@@ -1,6 +1,6 @@
 #include <iostream>
 #include <mutex>
-#include <curses.h>
+#include <ncurses.h>
 #include <thread>
 #include <fstream>
 #include <string>
@@ -142,16 +142,16 @@ void recordRank(int state, int timeSpend)
     WINDOW* registeringWin = newwin(design::REGISTER_HEIGHT, design::REGISTER_WIDTH, \
         (design::SCREEN_HEIGHT - design::REGISTER_HEIGHT) / 2 - 5, (design::SCREEN_WIDTH - design::REGISTER_WIDTH) / 2);
 
-    wborder(registeringWin, '*', '*', '*', '*', '*', '*', '*', '*');
-    mvwprintw(registeringWin, 1, 1, ("Your RECORD is " + userRecord + " s").c_str());
-    mvwprintw(registeringWin, 2, 1, ("Wil be RANKED at # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
-    mvwprintw(registeringWin, 3, 1, "type your name and press ENTER");
-    mvwprintw(registeringWin, 4, 1, "or press ESC to skip and quit");
+    mvwprintw(registeringWin, 1, 2, ("Your record is " + userRecord + " s").c_str());
+    mvwprintw(registeringWin, 2, 2, ("Will be ranked at # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
+    mvwprintw(registeringWin, 4, 2, "Type your name and press ENTER");
+    mvwprintw(registeringWin, 5, 2, "or press ESC to skip and quit");
+    wborder_set(registeringWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     int input;
     string userName = "";
     curs_set(1);
-    wmove(registeringWin, 5, 1);
+    wmove(registeringWin, 7, 2);
     wrefresh(registeringWin);
 
     bool willSave;
@@ -180,13 +180,14 @@ void recordRank(int state, int timeSpend)
                 wmove(registeringWin, y, x - 1);
             }
         }
-        else if(userName.length() <= design::MAX_NAME_LENGTH)
+        else if(userName.length() <= design::MAX_NAME_LENGTH && isalnum(input))
         {
             userName.push_back(input);
             waddch(registeringWin, input);
         }
         wrefresh(registeringWin);
     }
+    if(userName == "") userName = "UNKNOWN";
 
     if(willSave)
     {

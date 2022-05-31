@@ -146,13 +146,14 @@ void Manager::printScreen()
         for(int c = 0; c < cols; c++)
             mvwprintw(boardWin, r, c*2, gameInfo::PRINT_TABLE[map.getBlock(r, c)]);
     
-    mvwprintw(missionWin, 0, 0, ((string)design::RULER + " : " + (maxLength < 10? "0": "") + to_string(maxLength) + " / " + (goalLength < 10? "0": "") + to_string(goalLength)).c_str());
-    mvwprintw(missionWin, 1, 0, ((string)design::GROWTH + " : " + (map.getGrowthCount() < 10? "0": "") + to_string(map.getGrowthCount()) + " / " + (goalGrowth < 10? "0": "") + to_string(goalGrowth)).c_str());
-    mvwprintw(missionWin, 2, 0, ((string)design::POISON + "  : " + (map.getPoisonCount() < 10? "0": "") + to_string(map.getPoisonCount()) + " / " + (goalPoison < 10? "0": "") + to_string(goalPoison)).c_str());
-    mvwprintw(missionWin, 3, 0, ((string)design::GATE + " : " + (map.getGateCount() < 10? "0": "") + to_string(map.getGateCount()) + " / " + (goalGate < 10? "0": "") + to_string(goalGate)).c_str());
+    mvwprintw(missionWin, 1, 2, ((string)design::RULER + " : " + (maxLength < 10? "0": "") + to_string(maxLength) + " / " + (goalLength < 10? "0": "") + to_string(goalLength)).c_str());
+    mvwprintw(missionWin, 2, 2, ((string)design::GROWTH + " : " + (map.getGrowthCount() < 10? "0": "") + to_string(map.getGrowthCount()) + " / " + (goalGrowth < 10? "0": "") + to_string(goalGrowth)).c_str());
+    mvwprintw(missionWin, 3, 2, ((string)design::POISON + "  : " + (map.getPoisonCount() < 10? "0": "") + to_string(map.getPoisonCount()) + " / " + (goalPoison < 10? "0": "") + to_string(goalPoison)).c_str());
+    mvwprintw(missionWin, 4, 2, ((string)design::GATE + " : " + (map.getGateCount() < 10? "0": "") + to_string(map.getGateCount()) + " / " + (goalGate < 10? "0": "") + to_string(goalGate)).c_str());
     string seconds = to_string(chrono::duration_cast<std::chrono::seconds>(chrono::system_clock::now() - startTime).count());
     seconds = seconds.insert(0, "     ", 6 - seconds.length());
-    mvwprintw(missionWin, 4, 0, ((string)design::CLOCK + " : " + seconds + "s").c_str());
+    mvwprintw(missionWin, 5, 2, ((string)design::CLOCK + " : " + seconds + "s").c_str());
+    wborder_set(missionWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     wrefresh(boardWin);
     wrefresh(missionWin);
@@ -160,21 +161,24 @@ void Manager::printScreen()
 
 void Manager::showResult()
 {
-    WINDOW* resultWin = newwin(2, gameClear? 10: 8, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL);
+    WINDOW* resultWin = newwin(4, gameClear? 14: 12, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL + (gameClear? 1: 2));
+    wborder_set(resultWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
     wattrset(resultWin, A_BLINK | A_BOLD);
     wclear(resultWin);
-    mvwprintw(resultWin, 0, 0, gameClear? design::STAGE: design::GAME);
-    mvwprintw(resultWin, 1, 0, gameClear? design::CLEAR: design::OVER);
+    wborder_set(resultWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    mvwprintw(resultWin, 1, 2, gameClear? design::STAGE: design::GAME);
+    mvwprintw(resultWin, 2, 2, gameClear? design::CLEAR: design::OVER);
     wrefresh(resultWin);
     napms(2500);
 
-    WINDOW* nextWin = newwin(2, 15, design::MISSION_ROW + design::MISSION_HEIGHT + 4, design::MISSION_COL);
+    WINDOW* nextWin = newwin(4, 18, design::MISSION_ROW + design::MISSION_HEIGHT + 6, design::MISSION_COL - 1);
     wattrset(resultWin, A_BOLD);
     wbkgd(nextWin, BLACK_WHITE_PAIR);
     wclear(nextWin);
-    mvwprintw(nextWin, 0, 0, "Press Any Key");
-    mvwprintw(nextWin, 1, 0, "to Continue...");
+    wborder_set(nextWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    mvwprintw(nextWin, 1, 2, "Press Any Key");
+    mvwprintw(nextWin, 2, 2, "to Continue...");
     wrefresh(nextWin);
 
     flushinp();

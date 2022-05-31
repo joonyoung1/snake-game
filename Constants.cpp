@@ -58,9 +58,9 @@ const int design::RANK_ROW = 6;
 const int design::RANK_WIDTH = design::MAX_NAME_LENGTH + 14;
 
 const int design::MISSION_ROW = 5;
-const int design::MISSION_COL = 90;
-const int design::MISSION_HEIGHT = 5;
-const int design::MISSION_WIDTH = 12;
+const int design::MISSION_COL = 83;
+const int design::MISSION_HEIGHT = 7;
+const int design::MISSION_WIDTH = 16;
 const char* design::STAGE = "\uFF33\uFF34\uFF21\uFF27\uFF25";
 const char* design::CLEAR = "\uFF23\uFF2C\uFF25\uFF21\uFF32";
 const char* design::GAME = "\uFF27\uFF21\uFF2D\uFF25";
