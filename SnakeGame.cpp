@@ -110,8 +110,8 @@ int playGame(int stage)
 
 void recordRank(int state, int timeSpend)
 {
-    ifstream rankFile;
-    rankFile.open("rank.txt", ios::in);
+    ifstream readRankFile;
+    readRankFile.open("rank.txt");
 
     string temp;
     string name[5][10];
@@ -119,12 +119,13 @@ void recordRank(int state, int timeSpend)
     for(int i = 0; i < 5; i++)
         for(int j = 0; j < 10; j++)
         {
-            rankFile >> temp;
+            readRankFile >> temp;
             name[i][j] = temp.substr(5);
             name[i][j].resize(design::MAX_NAME_LENGTH, ' ');
-            rankFile >> temp;
+            readRankFile >> temp;
             record[i][j] = temp.substr(7);
         }
+    readRankFile.close();
 
     int rank;
     for(int i = 0; i < 10; i++)
@@ -133,31 +134,41 @@ void recordRank(int state, int timeSpend)
             rank = i + 1;
             break;
         }
-    string myRecord = to_string(timeSpend);
-    if(myRecord.length() < 4)
-        myRecord = myRecord.insert(0, 4 - myRecord.length(), '0');
-    myRecord = myRecord.insert(myRecord.length() - 3, ".");
+    string userRecord = to_string(timeSpend);
+    if(userRecord.length() < 4)
+        userRecord = userRecord.insert(0, 4 - userRecord.length(), '0');
+    userRecord = userRecord.insert(userRecord.length() - 3, ".");
     
     WINDOW* registeringWin = newwin(design::REGISTER_HEIGHT, design::REGISTER_WIDTH, \
         (design::SCREEN_HEIGHT - design::REGISTER_HEIGHT) / 2 - 5, (design::SCREEN_WIDTH - design::REGISTER_WIDTH) / 2);
 
     wborder(registeringWin, '*', '*', '*', '*', '*', '*', '*', '*');
-    mvwprintw(registeringWin, 1, 1, ("YOUR RECORD IS " + myRecord + " s").c_str());
-    mvwprintw(registeringWin, 2, 1, ("WILL BE RANKED AT # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
-    mvwprintw(registeringWin, 3, 1, "TYPE YOUR NAME AND PRESS ENTER");
+    mvwprintw(registeringWin, 1, 1, ("Your RECORD is " + userRecord + " s").c_str());
+    mvwprintw(registeringWin, 2, 1, ("Wil be RANKED at # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
+    mvwprintw(registeringWin, 3, 1, "type your name and press ENTER");
+    mvwprintw(registeringWin, 4, 1, "or press ESC to skip and quit");
 
     int input;
     string userName = "";
     curs_set(1);
-    wmove(registeringWin, 4, 1);
+    wmove(registeringWin, 5, 1);
     wrefresh(registeringWin);
 
+    bool willSave;
     while(true)
     {
         input = getch();
         if(input == 10)
+        {
+            willSave = true;
             break;
-        if(input == KEY_BACKSPACE)
+        }
+        else if(input == 27)
+        {
+            willSave = false;
+            break;
+        }
+        else if(input == KEY_BACKSPACE)
         {
             if(0 < userName.length())
             {
@@ -176,6 +187,27 @@ void recordRank(int state, int timeSpend)
         }
         wrefresh(registeringWin);
     }
+
+    if(willSave)
+    {
+        for(int i = 8; rank - 1 <= i; i--)
+        {
+            name[state][i + 1] = name[state][i];
+            record[state][i + 1] = record[state][i];
+        }
+        name[state][rank - 1] = userName;
+        record[state][rank - 1] = userRecord;
+    }
+
+    ofstream writeRankFile;
+    writeRankFile.open("rank.txt");
+    for(int i = 0; i < 5; i++)
+        for(int j = 0; j < 10; j++)
+        {
+            writeRankFile << "name:" << name[i][j] << " record:" << record[i][j] << endl;
+        }
+    writeRankFile.close();
+
     curs_set(0);
     clear();
     refresh();
@@ -260,8 +292,8 @@ void drawMenu(int mode)
 void rankMenu()
 {
     bkgd(WHITE_BLACK_PAIR);
-    ifstream rankFile;
-    rankFile.open("rank.txt", ios::in);
+    ifstream readRankFile;
+    readRankFile.open("rank.txt");
 
     string temp;
     string name[5][10];
@@ -269,12 +301,13 @@ void rankMenu()
     for(int i = 0; i < 5; i++)
         for(int j = 0; j < 10; j++)
         {
-            rankFile >> temp;
+            readRankFile >> temp;
             name[i][j] = temp.substr(5);
             name[i][j].resize(design::MAX_NAME_LENGTH, ' ');
-            rankFile >> temp;
+            readRankFile >> temp;
             record[i][j] = temp.substr(7);
         }
+    readRankFile.close();
 
     int state = STAGE_ALL;
     drawRank(state, name[state], record[state]);
