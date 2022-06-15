@@ -344,7 +344,8 @@ void drawRank(int state, string (&name)[10], string (&record)[10])
     for(int i = 0; i < 10; i++)
     {
         rank = to_string(i + 1);
-        if(i < 9) rank = "0" + rank;
+        if(i < 3) rank = design::MEDAL[i];
+        else if(i < 9) rank = "0" + rank;
         mvprintw(design::RANK_ROW + i * 2 + 3, (design::SCREEN_WIDTH - design::RANK_WIDTH) / 2, ("# " + rank + " " + name[i] + " " + record[i] + "s").c_str());
     }
     refresh();

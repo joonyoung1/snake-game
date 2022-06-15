@@ -13,8 +13,8 @@ Map::Map(int** board)
     boardMutex = singleton->getMutex();
     rows = gameInfo::MAP_SIZE[singleton->getStage()][0];
     cols = gameInfo::MAP_SIZE[singleton->getStage()][1];
-    growthCount = -1;
-    poisonCount = -1;
+    growthCount = -2;
+    poisonCount = -2;
     gateCount = 0;
 
     this->board = board;
@@ -26,8 +26,11 @@ Map::Map(int** board)
                 wallCount++;
     boardMutex->unlock();
 
-    createGrowth();
-    createPoison();
+    for(int i = 0; i < 2; i++)
+    {
+        createGrowth();
+        createPoison();
+    }
     thread createFirstGateThread(&Map::createFirstGate, this);
     createFirstGateThread.detach();
 }
@@ -57,7 +60,6 @@ void Map::createGrowth()
 void Map::createGrowth_()
 {
     int r, c;
-    int num = growthCount;
     int stage = singleton->getStage();
     int gameID = singleton->getGameID();
     chrono::system_clock::time_point start = chrono::system_clock::now();
@@ -73,14 +75,22 @@ void Map::createGrowth_()
         board[r][c] = 5;
         boardMutex->unlock();
 
-        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
-        if(stage != singleton->getStage() || gameID != singleton->getGameID() || num != growthCount)
+        this_thread::sleep_for(chrono::milliseconds(gameInfo::LIFETIME[stage]) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
+
+        if(stage != singleton->getStage() || gameID != singleton->getGameID())
             break;
-        
+
         boardMutex->lock();
-        if(board[r][c] == 5)
+        if(board[r][c] != 5)
+        {
+            boardMutex->unlock();
+            break;
+        }
+        else
+        {
             board[r][c] = 0;
-        boardMutex->unlock();
+            boardMutex->unlock();
+        }
         start = chrono::system_clock::now();
     }
 }
@@ -95,7 +105,6 @@ void Map::createPoison()
 void Map::createPoison_()
 {
     int r, c;
-    int num = poisonCount;
     int stage = singleton->getStage();
     int gameID = singleton->getGameID();
     chrono::system_clock::time_point start = chrono::system_clock::now();
@@ -111,14 +120,21 @@ void Map::createPoison_()
         board[r][c] = 6;
         boardMutex->unlock();
 
-        this_thread::sleep_for(chrono::milliseconds(5000) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
-        if(stage != singleton->getStage() || gameID != singleton->getGameID() || num != poisonCount)
+        this_thread::sleep_for(chrono::milliseconds(gameInfo::LIFETIME[stage]) - chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start));
+        if(stage != singleton->getStage() || gameID != singleton->getGameID())
             break;
-        
+
         boardMutex->lock();
-        if(board[r][c] == 6)
+        if(board[r][c] != 6)
+        {
+            boardMutex->unlock();
+            break;
+        }
+        else
+        {
             board[r][c] = 0;
-        boardMutex->unlock();
+            boardMutex->unlock();
+        }
         start = chrono::system_clock::now();
     }
 }

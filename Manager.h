@@ -14,6 +14,7 @@ private:
     int goalLength, goalGrowth, goalPoison, goalGate;
     int rows, cols;
     int maxLength;
+    int tick;
     bool playing, usingGate, gameClear;
     void moveSnake();
     void actByBlock();

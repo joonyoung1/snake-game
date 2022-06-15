@@ -43,6 +43,7 @@ namespace design
     extern const char* LOWER_RIGHT;
     extern const char* ARROW_LEFT;
     extern const char* ARROW_RIGHT;
+    extern const char* MEDAL[3];
 
     extern const char* PLAY;
     extern const char* RANK;
@@ -83,7 +84,6 @@ namespace design
 
     extern const int REGISTER_WIDTH;
     extern const int REGISTER_HEIGHT;
-
 }
 
 namespace gameInfo
@@ -94,4 +94,6 @@ namespace gameInfo
     extern const int MISSION[4][4];
     extern const int MAP_SIZE[4][2];
     extern const int MAP[4][35][35];
+    extern const int TICK[4];
+    extern const int LIFETIME[4];
 }

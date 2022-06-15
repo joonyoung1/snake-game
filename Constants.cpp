@@ -17,7 +17,7 @@ const char* design::BLOCK = "\u25A0";
 const char* design::HEAD = "\u25CF";
 const char* design::BODY = "\u29BF";
 const char* design::GROWTH = "\U0001F34E";
-const char* design::POISON = "\u2620";
+const char* design::POISON = "\U0001F480";
 const char* design::GATE = "\U0001F6AA";
 const char* design::RULER = "\U0001F4CF";
 const char* design::CLOCK = "\u23F0";
@@ -25,6 +25,8 @@ const char* design::UPPER_LEFT = "\u25E4";
 const char* design::LOWER_RIGHT = "\u25E2";
 const char* design::ARROW_LEFT = "\u2B9C";
 const char* design::ARROW_RIGHT = "\u2B9E";
+const char* design::MEDAL[3] = \
+    {"\U0001F947", "\U0001F948", "\U0001F949"};
 
 const char* design::PLAY = "\uFF30\uFF2c\uFF21\uFF39";
 const char* design::RANK = "\uFF32\uFF21\uFF2e\uFF2b";
@@ -199,4 +201,5 @@ const int gameInfo::MAP[4][35][35] = \
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2}}};
-
+const int gameInfo::TICK[4] = {300, 250, 210, 180};
+const int gameInfo::LIFETIME[4] = {7000, 6500, 6000, 5500};
