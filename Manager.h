@@ -15,6 +15,7 @@ private:
     int rows, cols;
     int maxLength;
     int tick;
+    int passedMilli;
     bool playing, usingGate, gameClear;
     void moveSnake();
     void actByBlock();
@@ -22,6 +23,6 @@ private:
     void printScreen();
     void showResult();
 public:
-    Manager(int** board);
+    Manager(int passedMilli);
     int startGame();
 };

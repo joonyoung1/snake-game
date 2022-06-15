@@ -8,7 +8,7 @@
 using namespace std;
 
 void title();
-int playGame(int stage);
+int playGame(int stage, int timeSum=0);
 void recordRank(int state, int timeSpend);
 int mainMenu();
 int surfMenu(int mode);
@@ -57,7 +57,7 @@ void title()
         {
             for(int i = 0; i < 4; i++)
             {
-                result = playGame(i);
+                result = playGame(i, timeSum);
                 if(!result)
                 {
                     cleared = false;
@@ -84,26 +84,16 @@ void title()
     endwin();
 }
 
-int playGame(int stage)
+int playGame(int stage, int timeSum)
 {
     int result;
     Singleton* singleton = Singleton::getSingleton();
-    singleton->setStage(stage);
+    singleton->createBoard(stage);
 
-    int **board = new int *[gameInfo::MAP_SIZE[stage][0]];
-    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
-    {
-        board[r] = new int[gameInfo::MAP_SIZE[stage][1]];
-        for(int c = 0; c < gameInfo::MAP_SIZE[stage][1]; c++)
-            board[r][c] = gameInfo::MAP[stage][r][c];
-    }
-    Manager manager = Manager(board);
+    Manager manager = Manager(timeSum);
     result = manager.startGame();
     singleton->nextGameID();
-
-    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
-        delete[] board[r];
-    delete[] board;
+    singleton->deleteBoard();
 
     return result;
 }
@@ -204,9 +194,7 @@ void recordRank(int state, int timeSpend)
     writeRankFile.open("rank.txt");
     for(int i = 0; i < 5; i++)
         for(int j = 0; j < 10; j++)
-        {
             writeRankFile << "name:" << name[i][j] << " record:" << record[i][j] << endl;
-        }
     writeRankFile.close();
 
     curs_set(0);

@@ -18,9 +18,28 @@ int Singleton::getStage()
     return stage;
 }
 
-void Singleton::setStage(int stage)
+void Singleton::createBoard(int stage)
 {
     this->stage = stage;
+    board = new int *[gameInfo::MAP_SIZE[stage][0]];
+    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
+    {
+        board[r] = new int[gameInfo::MAP_SIZE[stage][1]];
+        for(int c = 0; c < gameInfo::MAP_SIZE[stage][1]; c++)
+            board[r][c] = gameInfo::MAP[stage][r][c];
+    }
+}
+
+void Singleton::deleteBoard()
+{
+    for(int r = 0; r < gameInfo::MAP_SIZE[stage][0]; r++)
+        delete[] board[r];
+    delete[] board;
+}
+
+int** Singleton::getBoard()
+{
+    return board;
 }
 
 int Singleton::getGameID()

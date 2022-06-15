@@ -14,7 +14,7 @@ private:
     void createGrowth_();
     void createPoison_();
 public:
-    Map(int** board);
+    Map();
     int getBlock(int r, int c);
     void setBlock(int r, int c, int value);
     void createGrowth();

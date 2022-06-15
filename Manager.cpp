@@ -7,7 +7,7 @@ using namespace std;
 
 bool kbhit();
 
-Manager::Manager(int** board):map(board), snake()
+Manager::Manager(int passedMilli):map(), snake()
 {
     int stage = Singleton::getSingleton()->getStage();
     rows = gameInfo::MAP_SIZE[stage][0];
@@ -18,6 +18,7 @@ Manager::Manager(int** board):map(board), snake()
     goalGate = gameInfo::MISSION[stage][3];
     maxLength = 3;
     tick = gameInfo::TICK[stage];
+    this->passedMilli = passedMilli;
     d = gameInfo::SPAWN[stage][2];
     gameClear = false;
     playing = true;
@@ -167,7 +168,8 @@ void Manager::printScreen()
     mvwprintw(missionWin, 4, 2, ((string)design::GATE + " : " + (map.getGateCount() < 10? "0": "") + to_string(map.getGateCount()) + " / " + (goalGate < 10? "0": "") + to_string(goalGate)).c_str());
     wattroff(missionWin, GREEN_WHITE_PAIR);
     
-    string seconds = to_string(chrono::duration_cast<std::chrono::seconds>(chrono::system_clock::now() - startTime).count());
+    int millis = chrono::duration_cast<std::chrono::milliseconds>(chrono::system_clock::now() - startTime).count() + passedMilli;
+    string seconds = to_string(millis / 1000);
     seconds = seconds.insert(0, "     ", 6 - seconds.length());
     mvwprintw(missionWin, 5, 2, ((string)design::CLOCK + " : " + seconds + "s").c_str());
     wborder_set(missionWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

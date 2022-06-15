@@ -6,10 +6,11 @@
 #include "Map.h"
 using namespace std;
 
-Map::Map(int** board)
+Map::Map()
 {
     srand(time(NULL));
     singleton = Singleton::getSingleton();
+    board = singleton->getBoard();
     boardMutex = singleton->getMutex();
     rows = gameInfo::MAP_SIZE[singleton->getStage()][0];
     cols = gameInfo::MAP_SIZE[singleton->getStage()][1];
@@ -17,7 +18,6 @@ Map::Map(int** board)
     poisonCount = -2;
     gateCount = 0;
 
-    this->board = board;
     wallCount = 0;
     boardMutex->lock();
     for(int r = 0; r < rows; r++)

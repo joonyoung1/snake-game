@@ -19,6 +19,8 @@ name:stage1_test_8   record:9999.999
 name:stage1_test_9   record:9999.999
 name:stage1_test_10  record:9999.999
 name:ThatWasAnTest   record:5.019
+name:FeelGood        record:19.309
+name:hong            record:23.064
 name:stage2_test_1   record:9999.999
 name:stage2_test_2   record:9999.999
 name:stage2_test_3   record:9999.999
@@ -26,9 +28,7 @@ name:stage2_test_4   record:9999.999
 name:stage2_test_5   record:9999.999
 name:stage2_test_6   record:9999.999
 name:stage2_test_7   record:9999.999
-name:stage2_test_8   record:9999.999
-name:stage2_test_9   record:9999.999
-name:NoError record:4.425
+name:NoError         record:4.425
 name:IgotEveryThing  record:8.026
 name:JohnDoe         record:13.244
 name:stage3_test_1   record:9999.999
