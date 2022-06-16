@@ -56,7 +56,7 @@ int Manager::startGame()
     delwin(boardWin);
     delwin(missionWin);
 
-    return 152825;
+    return gameClear? timeSpend: 0;
 }
 
 void Manager::moveSnake()
