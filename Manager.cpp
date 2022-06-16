@@ -173,6 +173,7 @@ void Manager::printScreen()
     seconds = seconds.insert(0, "     ", 6 - seconds.length());
     mvwprintw(missionWin, 5, 2, ((string)design::CLOCK + " : " + seconds + "s").c_str());
     wborder_set(missionWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    //wborder(resultWin, '*', '*', '*', '*', '*', '*', '*', '*');
 
     wrefresh(boardWin);
     wrefresh(missionWin);
@@ -181,11 +182,11 @@ void Manager::printScreen()
 void Manager::showResult()
 {
     WINDOW* resultWin = newwin(4, gameClear? 14: 12, design::MISSION_ROW + design::MISSION_HEIGHT + 1, design::MISSION_COL + (gameClear? 1: 2));
-    wborder_set(resultWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     wbkgd(resultWin, gameClear? GREEN_WHITE_PAIR: RED_WHITE_PAIR);
     wattrset(resultWin, A_BLINK | A_BOLD);
     wclear(resultWin);
     wborder_set(resultWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    //wborder(resultWin, '*', '*', '*', '*', '*', '*', '*', '*');
     mvwprintw(resultWin, 1, 2, gameClear? design::STAGE: design::GAME);
     mvwprintw(resultWin, 2, 2, gameClear? design::CLEAR: design::OVER);
     wrefresh(resultWin);
@@ -196,6 +197,7 @@ void Manager::showResult()
     wbkgd(nextWin, BLACK_WHITE_PAIR);
     wclear(nextWin);
     wborder_set(nextWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    //wborder(resultWin, '*', '*', '*', '*', '*', '*', '*', '*');
     mvwprintw(nextWin, 1, 2, "Press Any Key");
     mvwprintw(nextWin, 2, 2, "to Continue...");
     wrefresh(nextWin);

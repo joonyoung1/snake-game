@@ -247,9 +247,10 @@ int Map::moveToOppositeGate(int** body, int d)
     }
 
     int newR, newC;
+    int direction[4] = {d, (d + 1) % 4, (d + 3) % 4, (d + 2) % 4};
     for(int i = 0; i < 4; i++)
     {
-        d = (d + i) % 4;
+        d = direction[i];
         newR = r + gameInfo::DIRECTION[d][0];
         newC = c + gameInfo::DIRECTION[d][1];
         if(0 <= newR && newR < rows && 0 <= newC && newC < cols)

@@ -9,8 +9,8 @@ Singleton::Singleton()
 
 Singleton* Singleton::getSingleton()
 {
-    static Singleton Singleton;
-    return &Singleton;
+    static Singleton singleton;
+    return &singleton;
 }
 
 int Singleton::getStage()

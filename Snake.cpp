@@ -9,8 +9,8 @@ Snake::Snake()
     length = 3;
     d = (d + 2) % 4;
 
-    body = new int*[1000];
-    for(int i = 0; i < 1000; i++)
+    body = new int*[100];
+    for(int i = 0; i < 100; i++)
         body[i] = new int[2];
     
     for(int i = 0; i < 3; i++)
@@ -24,7 +24,7 @@ Snake::Snake()
 
 Snake::~Snake()
 {
-    for(int i = 0; i < 1000; i++)
+    for(int i = 0; i < 100; i++)
         delete[] body[i];
     delete[] body;
 }

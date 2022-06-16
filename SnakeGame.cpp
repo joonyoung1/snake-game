@@ -88,12 +88,16 @@ int playGame(int stage, int timeSum)
 {
     int result;
     Singleton* singleton = Singleton::getSingleton();
+    singleton->getMutex()->lock();
     singleton->createBoard(stage);
+    singleton->getMutex()->unlock();
 
     Manager manager = Manager(timeSum);
     result = manager.startGame();
     singleton->nextGameID();
+    singleton->getMutex()->lock();
     singleton->deleteBoard();
+    singleton->getMutex()->unlock();
 
     return result;
 }
@@ -117,7 +121,7 @@ void recordRank(int state, int timeSpend)
         }
     readRankFile.close();
 
-    int rank;
+    int rank = 0;
     for(int i = 0; i < 10; i++)
         if(timeSpend / 1000.0 <= stod(record[state][i]))
         {
@@ -131,12 +135,22 @@ void recordRank(int state, int timeSpend)
     
     WINDOW* registeringWin = newwin(design::REGISTER_HEIGHT, design::REGISTER_WIDTH, \
         (design::SCREEN_HEIGHT - design::REGISTER_HEIGHT) / 2 - 5, (design::SCREEN_WIDTH - design::REGISTER_WIDTH) / 2);
+    wborder_set(registeringWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    //wborder(resultWin, '*', '*', '*', '*', '*', '*', '*', '*');
 
     mvwprintw(registeringWin, 1, 2, ("Your record is " + userRecord + " s").c_str());
+    if(rank == 0)
+    {
+        mvwprintw(registeringWin, 2, 2, "The record of # 10");
+        mvwprintw(registeringWin, 3, 2, ("is "+ record[state][9] + " s").c_str());
+        mvwprintw(registeringWin, 5, 2, "Press any key to skip and quit");
+        wrefresh(registeringWin);
+        getch();
+        return;
+    }
     mvwprintw(registeringWin, 2, 2, ("Will be ranked at # " + (string)(rank < 10? "0": "") + to_string(rank)).c_str());
     mvwprintw(registeringWin, 4, 2, "Type your name and press ENTER");
     mvwprintw(registeringWin, 5, 2, "or press ESC to skip and quit");
-    wborder_set(registeringWin, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     int input;
     string userName = "";
