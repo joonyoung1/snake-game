@@ -1,4 +1,4 @@
 # Snake Game
 C++ Programming
 
-[Snake Game Test](https://youtu.be/-e556lOBqxQ)
+[![Video Label](http://img.youtube.com/vi/-e556lOBqxQ/0.jpg)](https://youtu.be/-e556lOBqxQ)
